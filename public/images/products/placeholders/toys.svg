@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 800">
+  <rect width="800" height="800" fill="#f2f2f2"/>
+  <g stroke="#9aa0a6" stroke-width="8" fill="#ffffff">
+    <rect x="260" y="320" width="110" height="110" rx="10"/>
+    <rect x="390" y="320" width="110" height="110" rx="10"/>
+    <rect x="325" y="200" width="110" height="110" rx="10"/>
+    <circle cx="500" cy="470" r="55"/>
+  </g>
+  <text x="400" y="640" text-anchor="middle" font-family="Arial, sans-serif" font-size="30" fill="#6c7075">Toys</text>
+  <text x="400" y="678" text-anchor="middle" font-family="Arial, sans-serif" font-size="18" fill="#9aa0a6">Product image coming soon</text>
+</svg>

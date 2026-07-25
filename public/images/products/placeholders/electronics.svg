@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 800">
+  <rect width="800" height="800" fill="#f2f2f2"/>
+  <g fill="none" stroke="#9aa0a6" stroke-width="10">
+    <rect x="300" y="180" width="200" height="360" rx="24" fill="#ffffff"/>
+    <line x1="330" y1="230" x2="470" y2="230"/>
+    <line x1="330" y1="280" x2="470" y2="280"/>
+    <line x1="330" y1="330" x2="440" y2="330"/>
+    <circle cx="400" cy="500" r="16"/>
+  </g>
+  <text x="400" y="640" text-anchor="middle" font-family="Arial, sans-serif" font-size="30" fill="#6c7075">Electronics</text>
+  <text x="400" y="678" text-anchor="middle" font-family="Arial, sans-serif" font-size="18" fill="#9aa0a6">Product image coming soon</text>
+</svg>
