@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 70">
+  <g fill="none" stroke="#555" stroke-width="4" stroke-linecap="round">
+    <ellipse cx="50" cy="56" rx="16" ry="4" />
+    <path d="M42 56 L44 32 Q50 24 56 32 L58 56" />
+  </g>
+  <text x="90" y="42" font-family="Georgia, serif" font-size="24" fill="#333">Belle</text>
+  <text x="90" y="60" font-family="Arial, sans-serif" font-size="12" letter-spacing="2" fill="#777">DECOR</text>
+</svg>

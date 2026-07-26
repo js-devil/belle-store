@@ -244,7 +244,10 @@ document.addEventListener("DOMContentLoaded", function () {
         lazyLoad: "ondemand",
       });
     }
-    home_slider();
+    // home_slider() is now initialized explicitly from HeroSlideshow.vue instead -
+    // calling it again here would throw ("Slick: Slick is already initialized")
+    // and abort every remaining line in this file's DOMContentLoaded callback.
+    // home_slider();
 
     // Full Size Banner on the Any Screen
     $(window)
@@ -448,7 +451,9 @@ document.addEventListener("DOMContentLoaded", function () {
         ],
       });
     }
-    collection_slider();
+    // collection_slider() is now initialized explicitly from CategoryShowcase.vue -
+    // see the note above home_slider() for why calling it again here is unsafe.
+    // collection_slider();
 
     /*-----------------------------------------
 	  10.8 Collection Slider Slick 4 items ----
@@ -522,7 +527,9 @@ document.addEventListener("DOMContentLoaded", function () {
         ],
       });
     }
-    logo_slider();
+    // logo_slider() is now initialized explicitly from BrandSlider.vue -
+    // see the note above home_slider() for why calling it again here is unsafe.
+    // logo_slider();
 
     /*-----------------------------------------
 	  10.10 Testimonial Slider Slick ----------
