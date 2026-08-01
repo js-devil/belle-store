@@ -22,6 +22,7 @@
              gesture handling needed for the core interaction. -->
         <template v-if="modelSrc">
           <model-viewer
+            v-show="!hasError"
             ref="viewerEl"
             :src="modelSrc"
             :poster="posterImage"
@@ -34,14 +35,22 @@
             @progress="handleProgress"
             @camera-change="handleCameraChange"
             @load="handleLoad"
+            @error="handleError"
           ></model-viewer>
 
           <!-- Sleek, simple loading indicator: a thin linear bar rather than a
                spinner, since some models are 10MB+ and a spinner reads as "stuck". -->
-          <div v-if="!isLoaded" class="viewer3d-progress-track">
+          <div v-if="!isLoaded && !hasError" class="viewer3d-progress-track">
             <div class="viewer3d-progress-fill" :style="{ width: `${loadPercent}%` }"></div>
           </div>
-          <p class="viewer3d-hint">Drag to rotate &middot; Scroll or pinch to zoom</p>
+          <p v-if="!hasError" class="viewer3d-hint">Drag to rotate &middot; Scroll or pinch to zoom</p>
+
+          <div v-if="hasError" class="viewer3d-placeholder">
+            <img :src="posterImage" :alt="productTitle" />
+            <p class="viewer3d-message">
+              The 3D model for <strong>{{ productTitle }}</strong> couldn't be loaded right now.
+            </p>
+          </div>
         </template>
 
         <!-- No 3D asset sourced yet for this product - graceful placeholder. -->
@@ -73,12 +82,23 @@ const viewerEl = ref(null);
 const isFullscreen = ref(false);
 const isLoaded = ref(false);
 const loadPercent = ref(0);
+const hasError = ref(false);
 
 function handleProgress(event) {
   loadPercent.value = Math.round((event.detail?.totalProgress ?? 0) * 100);
 }
 
 function handleLoad() {
+  isLoaded.value = true;
+}
+
+function handleError(event) {
+  // model-viewer fires this when the GLB fails to fetch or fails to parse -
+  // previously unhandled, so a broken model silently rendered as an empty
+  // canvas (reported as "showing blank/white") with no indication anything
+  // had gone wrong.
+  console.error("model-viewer failed to load", props.modelSrc, event.detail);
+  hasError.value = true;
   isLoaded.value = true;
 }
 
