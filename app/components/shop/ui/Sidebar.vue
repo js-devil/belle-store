@@ -63,3 +63,18 @@ const popularProducts = [...products]
     image: product.images.primary,
   }));
 </script>
+
+<style scoped>
+/* Keep the sidebar in view while scrolling the product grid, but only where
+   it renders inline (desktop) - the same class also drives the mobile
+   off-canvas filter drawer, which must stay position:fixed via its own rules. */
+@media (min-width: 768px) {
+  .sidebar.filterbar {
+    position: sticky;
+    top: 20px;
+    align-self: flex-start;
+    max-height: calc(100vh - 40px);
+    overflow-y: auto;
+  }
+}
+</style>
