@@ -17,7 +17,9 @@
           <div class="d-block d-lg-none">
             <button
               type="button"
-              class="btn--link site-header__menu js-mobile-nav-toggle mobile-nav--open"
+              class="btn--link site-header__menu js-mobile-nav-toggle"
+              :class="isMobileNavOpen ? 'mobile-nav--close' : 'mobile-nav--open'"
+              @click="toggleMobileNav"
             >
               <i class="icon anm anm-times-l"></i>
               <i class="anm anm-bars-r"></i>
@@ -130,7 +132,7 @@
             <!--End Minicart Popup-->
           </div>
           <div class="site-header__search">
-            <button type="button" class="search-trigger">
+            <button type="button" class="search-trigger" @click="toggleSearch">
               <i class="icon anm anm-search-l"></i>
             </button>
           </div>
@@ -145,6 +147,7 @@ import { categories } from "@/data/categories.js";
 
 const { items, itemCount, subtotalUsd, removeFromCart } = useCart();
 const { formatPrice } = useCurrency();
+const { isMobileNavOpen, toggleMobileNav, toggleSearch } = useUiState();
 </script>
 
 <style scoped>

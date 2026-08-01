@@ -47,7 +47,12 @@ const subcategoryLabel = {
   sneakers: "Sneakers",
 }[route.query.subcategory];
 
+const searchQuery = computed(() =>
+  typeof route.query.search === "string" ? route.query.search.trim() : ""
+);
+
 const bannerTitle = computed(() => {
+  if (searchQuery.value) return `Search results for "${searchQuery.value}"`;
   if (subcategoryLabel) return `${subcategoryLabel} Shoes`;
   return activeCategory.value?.label ?? "Shop All Products";
 });
@@ -55,17 +60,25 @@ const bannerImage = computed(
   () => activeCategory.value?.tileImage ?? "/images/collection/collection-page1.jpg"
 );
 
-// reset pagination whenever the category/subcategory filter changes
+// reset pagination whenever the category/subcategory/search filter changes
 watch(
-  () => [route.query.category, route.query.subcategory],
+  () => [route.query.category, route.query.subcategory, route.query.search],
   () => {
     page.value = 1;
   }
 );
 
-const filteredProducts = computed(() =>
-  getProductsByCategory(route.query.category, route.query.subcategory)
-);
+const filteredProducts = computed(() => {
+  const byCategory = getProductsByCategory(route.query.category, route.query.subcategory);
+  if (!searchQuery.value) return byCategory;
+  const needle = searchQuery.value.toLowerCase();
+  return byCategory.filter(
+    (product) =>
+      product.title.toLowerCase().includes(needle) ||
+      product.brand.toLowerCase().includes(needle) ||
+      product.category.toLowerCase().includes(needle)
+  );
+});
 
 const sortedProducts = computed(() => {
   const list = [...filteredProducts.value];

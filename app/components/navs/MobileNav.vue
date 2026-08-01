@@ -1,6 +1,6 @@
 <template>
-  <div class="mobile-nav-wrapper" role="navigation">
-    <div class="closemobileMenu">
+  <div class="mobile-nav-wrapper" :class="{ active: isMobileNavOpen }" role="navigation">
+    <div class="closemobileMenu" @click="closeMobileNav">
       <i class="icon anm anm-times-l pull-right"></i> Close Menu
     </div>
     <ul id="MobileNav" class="mobile-nav">
@@ -34,4 +34,15 @@
 
 <script setup>
 import { categories } from "@/data/categories.js";
+
+const { isMobileNavOpen, closeMobileNav } = useUiState();
+
+// The legacy CSS shifts .pageWrapper via a body.menuOn class when the
+// drawer opens (see responsive.css) - body isn't a Vue-managed element,
+// so toggle the class directly, client-side only.
+watch(isMobileNavOpen, (open) => {
+  if (typeof document !== "undefined") {
+    document.body.classList.toggle("menuOn", open);
+  }
+});
 </script>
