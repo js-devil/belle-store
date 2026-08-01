@@ -3,7 +3,7 @@
     <div class="closeFilter d-block d-md-none d-lg-none">
       <i class="icon icon anm anm-times-l"></i>
     </div>
-    <div class="sidebar_tags">
+    <div class="sidebar_tags" style="padding-top: 16px">
       <CategoryWidget :categories="categories" />
       <PriceFilterWidget />
       <SizeSwatches v-if="sizes.length" :sizes="sizes" />
@@ -31,7 +31,7 @@ const route = useRoute();
 // selected, so we never show filters (e.g. shoe sizes) that don't apply to
 // the products actually on screen.
 const scopedProducts = computed(() =>
-  getProductsByCategory(route.query.category, route.query.subcategory)
+  getProductsByCategory(route.query.category, route.query.subcategory),
 );
 
 const sizes = computed(() => [
@@ -40,8 +40,8 @@ const sizes = computed(() => [
 const colors = computed(() => [
   ...new Set(
     scopedProducts.value.flatMap(
-      (product) => product.colors?.map((color) => color.name) ?? []
-    )
+      (product) => product.colors?.map((color) => color.name) ?? [],
+    ),
   ),
 ]);
 const brands = computed(() => [

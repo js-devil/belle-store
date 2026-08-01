@@ -27,7 +27,11 @@ export const jewelry = [
     rectangularLabels: false,
     description:
       "<p>A refined solitaire-style ring with a sculpted band that catches the light from every angle — an everyday piece with an occasion-worthy finish.</p>",
-    details: ["Rhodium-plated setting", "Cubic zirconia centre stone", "Adjustable band"],
+    details: [
+      "Rhodium-plated setting",
+      "Cubic zirconia centre stone",
+      "Adjustable band",
+    ],
     shippingReturns: SHIPPING_RETURNS,
     sizeChart: null,
     sizes: null,
@@ -36,9 +40,21 @@ export const jewelry = [
       { name: "Gold", hex: "#d4af37" },
       { name: "Rose Gold", hex: "#b76e79" },
     ],
-    images: { primary: image("avalon_mcqueeny_ring"), hover: image("avalon_mcqueeny_ring"), gallery: [image("avalon_mcqueeny_ring")] },
+    images: {
+      primary: image("avalon_mcqueeny_ring"),
+      hover: image("avalon_mcqueeny_ring"),
+      gallery: [image("avalon_mcqueeny_ring")],
+    },
     model3d: model("avalon_mcqueeny_ring"),
-    reviews: [{ author: "Chiamaka E.", rating: 5, title: "Beautiful detail", body: "The band catches the light so nicely, more detailed than I expected at this price.", date: "2026-02-16" }],
+    reviews: [
+      {
+        author: "Chiamaka E.",
+        rating: 5,
+        title: "Beautiful detail",
+        body: "The band catches the light so nicely, more detailed than I expected at this price.",
+        date: "2026-02-16",
+      },
+    ],
   },
   {
     id: "jewelry-002",
@@ -57,14 +73,30 @@ export const jewelry = [
     rectangularLabels: false,
     description:
       "<p>A minimalist band with a subtly chamfered edge for a modern, architectural look. Sits comfortably alone or stacked with other rings.</p>",
-    details: ["Brushed metal finish", "Chamfered edge detail", "Comfort-fit interior"],
+    details: [
+      "Brushed metal finish",
+      "Chamfered edge detail",
+      "Comfort-fit interior",
+    ],
     shippingReturns: SHIPPING_RETURNS,
     sizeChart: null,
     sizes: null,
     colors: null,
-    images: { primary: image("chamfered_edge_ring"), hover: image("chamfered_edge_ring"), gallery: [image("chamfered_edge_ring")] },
+    images: {
+      primary: image("chamfered_edge_ring"),
+      hover: image("chamfered_edge_ring"),
+      gallery: [image("chamfered_edge_ring")],
+    },
     model3d: model("chamfered_edge_ring"),
-    reviews: [{ author: "Segun O.", rating: 4, title: "Simple and clean", body: "Exactly the minimalist look I wanted, comfortable to wear daily.", date: "2026-01-19" }],
+    reviews: [
+      {
+        author: "Segun O.",
+        rating: 4,
+        title: "Simple and clean",
+        body: "Exactly the minimalist look I wanted, comfortable to wear daily.",
+        date: "2026-01-19",
+      },
+    ],
   },
   {
     id: "jewelry-003",
@@ -79,11 +111,18 @@ export const jewelry = [
     reviewCount: 15,
     sku: "BJ-JWL-003",
     stock: 6,
-    labels: [{ text: "-16%", class: "on-sale" }, { text: "Hot", class: "pr-label2" }],
+    labels: [
+      { text: "-16%", class: "on-sale" },
+      { text: "Hot", class: "pr-label2" },
+    ],
     rectangularLabels: true,
     description:
       "<p>A matching engagement ring and wedding band bridal set, pairing a raised centre stone with a contoured band designed to sit flush alongside it.</p>",
-    details: ["2-piece bridal set", "Contoured band pairs flush with engagement ring", "Gift box included"],
+    details: [
+      "2-piece bridal set",
+      "Contoured band pairs flush with engagement ring",
+      "Gift box included",
+    ],
     shippingReturns: SHIPPING_RETURNS,
     sizeChart: null,
     sizes: null,
@@ -92,9 +131,21 @@ export const jewelry = [
       { name: "Yellow Gold", hex: "#d4af37" },
       { name: "Rose Gold", hex: "#b76e79" },
     ],
-    images: { primary: image("chapel_hills_cline_bridal_set"), hover: image("chapel_hills_cline_bridal_set"), gallery: [image("chapel_hills_cline_bridal_set")] },
+    images: {
+      primary: image("chapel_hills_cline_bridal_set"),
+      hover: image("chapel_hills_cline_bridal_set"),
+      gallery: [image("chapel_hills_cline_bridal_set")],
+    },
     model3d: model("chapel_hills_cline_bridal_set"),
-    reviews: [{ author: "Ifeoma R.", rating: 5, title: "Said yes to this set", body: "The two rings sit together perfectly, exactly as shown in the 3D preview.", date: "2026-03-05" }],
+    reviews: [
+      {
+        author: "Ifeoma R.",
+        rating: 5,
+        title: "Said yes to this set",
+        body: "The two rings sit together perfectly, exactly as shown in the 3D preview.",
+        date: "2026-03-05",
+      },
+    ],
   },
   {
     id: "jewelry-004",
@@ -118,9 +169,21 @@ export const jewelry = [
     sizeChart: null,
     sizes: null,
     colors: null,
-    images: { primary: image("cross_pendant"), hover: image("cross_pendant"), gallery: [image("cross_pendant")] },
+    images: {
+      primary: image("cross_pendant"),
+      hover: image("cross_pendant"),
+      gallery: [image("cross_pendant")],
+    },
     model3d: model("cross_pendant"),
-    reviews: [{ author: "Grace M.", rating: 5, title: "Wear it every day", body: "Simple, elegant, hasn't tarnished after weeks of daily wear.", date: "2026-02-28" }],
+    reviews: [
+      {
+        author: "Grace M.",
+        rating: 5,
+        title: "Wear it every day",
+        body: "Simple, elegant, hasn't tarnished after weeks of daily wear.",
+        date: "2026-02-28",
+      },
+    ],
   },
   {
     id: "jewelry-005",
@@ -139,14 +202,30 @@ export const jewelry = [
     rectangularLabels: false,
     description:
       "<p>A crown-shaped statement ring with a tiered, regal silhouette — designed to be noticed rather than blend in.</p>",
-    details: ["Gold-plated brass", "Crown silhouette design", "Adjustable band"],
+    details: [
+      "Gold-plated brass",
+      "Crown silhouette design",
+      "Adjustable band",
+    ],
     shippingReturns: SHIPPING_RETURNS,
     sizeChart: null,
     sizes: null,
     colors: null,
-    images: { primary: image("crown-ring"), hover: image("crown-ring"), gallery: [image("crown-ring")] },
+    images: {
+      primary: image("crown-ring"),
+      hover: image("crown-ring"),
+      gallery: [image("crown-ring")],
+    },
     model3d: model("crown-ring"),
-    reviews: [{ author: "Zainab M.", rating: 4, title: "Great statement piece", body: "Gets noticed every time, exactly the drama I was after.", date: "2026-01-31" }],
+    reviews: [
+      {
+        author: "Zainab M.",
+        rating: 4,
+        title: "Great statement piece",
+        body: "Gets noticed every time, exactly the drama I was after.",
+        date: "2026-01-31",
+      },
+    ],
   },
   {
     id: "jewelry-006",
@@ -165,14 +244,30 @@ export const jewelry = [
     rectangularLabels: false,
     description:
       "<p>A deep red garnet set solitaire-style on a slim gold-tone band — a warm, versatile alternative to a traditional diamond ring.</p>",
-    details: ["Genuine garnet centre stone", "Gold-plated band", "Prong setting"],
+    details: [
+      "Genuine garnet centre stone",
+      "Gold-plated band",
+      "Prong setting",
+    ],
     shippingReturns: SHIPPING_RETURNS,
     sizeChart: null,
     sizes: null,
     colors: null,
-    images: { primary: image("garnet_ring"), hover: image("garnet_ring"), gallery: [image("garnet_ring")] },
+    images: {
+      primary: image("garnet_ring"),
+      hover: image("garnet_ring"),
+      gallery: [image("garnet_ring")],
+    },
     model3d: model("garnet_ring"),
-    reviews: [{ author: "Blessing U.", rating: 5, title: "Rich colour", body: "The garnet colour is deep and warm, looks more expensive than it is.", date: "2026-03-12" }],
+    reviews: [
+      {
+        author: "Blessing U.",
+        rating: 5,
+        title: "Rich colour",
+        body: "The garnet colour is deep and warm, looks more expensive than it is.",
+        date: "2026-03-12",
+      },
+    ],
   },
   {
     id: "jewelry-007",
@@ -191,14 +286,30 @@ export const jewelry = [
     rectangularLabels: false,
     description:
       "<p>A clean, unembellished gold-tone band built to be worn alone or stacked — a foundational piece for any jewelry box.</p>",
-    details: ["Gold-plated brass", "Smooth polished band", "Available in multiple widths"],
+    details: [
+      "Gold-plated brass",
+      "Smooth polished band",
+      "Available in multiple widths",
+    ],
     shippingReturns: SHIPPING_RETURNS,
     sizeChart: null,
     sizes: null,
     colors: null,
-    images: { primary: image("golden_base_ring"), hover: image("golden_base_ring"), gallery: [image("golden_base_ring")] },
+    images: {
+      primary: image("golden_base_ring"),
+      hover: image("golden_base_ring"),
+      gallery: [image("golden_base_ring")],
+    },
     model3d: model("golden_base_ring"),
-    reviews: [{ author: "Ngozi I.", rating: 4, title: "Good basic band", body: "Wear it stacked with other rings, holds up well day to day.", date: "2026-02-06" }],
+    reviews: [
+      {
+        author: "Ngozi I.",
+        rating: 4,
+        title: "Good basic band",
+        body: "Wear it stacked with other rings, holds up well day to day.",
+        date: "2026-02-06",
+      },
+    ],
   },
   {
     id: "jewelry-008",
@@ -217,18 +328,35 @@ export const jewelry = [
     rectangularLabels: false,
     description:
       "<p>A traditional rosary with smooth glass beads and a detailed crucifix pendant, presented in a keepsake pouch.</p>",
-    details: ["Glass bead decades", "Detailed crucifix pendant", "Keepsake pouch included"],
+    details: [
+      "Glass bead decades",
+      "Detailed crucifix pendant",
+      "Keepsake pouch included",
+    ],
     shippingReturns: SHIPPING_RETURNS,
     sizeChart: null,
     sizes: null,
-    colors: [
-      { name: "Pearl White", hex: "#f5f0e6" },
-      { name: "Amethyst", hex: "#6c4a8e" },
-      { name: "Ruby Red", hex: "#8b2635" },
-    ],
-    images: { primary: image("juliet_rosary"), hover: image("juliet_rosary"), gallery: [image("juliet_rosary")] },
+    colors: null,
+    // colors: [
+    //   { name: "Pearl White", hex: "#f5f0e6" },
+    //   { name: "Amethyst", hex: "#6c4a8e" },
+    //   { name: "Ruby Red", hex: "#8b2635" },
+    // ],
+    images: {
+      primary: image("juliet_rosary"),
+      hover: image("juliet_rosary"),
+      gallery: [image("juliet_rosary")],
+    },
     model3d: model("juliet_rosary"),
-    reviews: [{ author: "Precious A.", rating: 5, title: "Lovely gift", body: "Bought for my mother, the pouch made it feel like a proper gift.", date: "2026-03-20" }],
+    reviews: [
+      {
+        author: "Precious A.",
+        rating: 5,
+        title: "Lovely gift",
+        body: "Bought for my mother, the pouch made it feel like a proper gift.",
+        date: "2026-03-20",
+      },
+    ],
   },
   {
     id: "jewelry-009",
@@ -247,14 +375,30 @@ export const jewelry = [
     rectangularLabels: true,
     description:
       "<p>A cluster ring combining ruby-tone stones and freshwater pearls in an heirloom-inspired arrangement.</p>",
-    details: ["Ruby-tone cubic zirconia", "Freshwater pearl accents", "Vintage-inspired setting"],
+    details: [
+      "Ruby-tone cubic zirconia",
+      "Freshwater pearl accents",
+      "Vintage-inspired setting",
+    ],
     shippingReturns: SHIPPING_RETURNS,
     sizeChart: null,
     sizes: null,
     colors: null,
-    images: { primary: image("ring_with_rubies_and_pearls"), hover: image("ring_with_rubies_and_pearls"), gallery: [image("ring_with_rubies_and_pearls")] },
+    images: {
+      primary: image("ring_with_rubies_and_pearls"),
+      hover: image("ring_with_rubies_and_pearls"),
+      gallery: [image("ring_with_rubies_and_pearls")],
+    },
     model3d: model("ring_with_rubies_and_pearls"),
-    reviews: [{ author: "Halima B.", rating: 5, title: "Heirloom feel", body: "Looks like something passed down for generations, stunning detail.", date: "2026-02-23" }],
+    reviews: [
+      {
+        author: "Halima B.",
+        rating: 5,
+        title: "Heirloom feel",
+        body: "Looks like something passed down for generations, stunning detail.",
+        date: "2026-02-23",
+      },
+    ],
   },
   {
     id: "jewelry-010",
@@ -273,14 +417,30 @@ export const jewelry = [
     rectangularLabels: false,
     description:
       "<p>A trilogy ring featuring three graduated cubic zirconia stones said to represent past, present and future — a popular choice for engagements and anniversaries.</p>",
-    details: ["Three-stone trilogy setting", "Cubic zirconia stones", "Platinum-finish band"],
+    details: [
+      "Three-stone trilogy setting",
+      "Cubic zirconia stones",
+      "Platinum-finish band",
+    ],
     shippingReturns: SHIPPING_RETURNS,
     sizeChart: null,
     sizes: null,
     colors: null,
-    images: { primary: image("ring_with_three_diamonds"), hover: image("ring_with_three_diamonds"), gallery: [image("ring_with_three_diamonds")] },
+    images: {
+      primary: image("ring_with_three_diamonds"),
+      hover: image("ring_with_three_diamonds"),
+      gallery: [image("ring_with_three_diamonds")],
+    },
     model3d: model("ring_with_three_diamonds"),
-    reviews: [{ author: "Adaeze O.", rating: 5, title: "Exactly what I hoped for", body: "The three stones catch light beautifully from every angle, being able to rotate it in 3D before buying sold me.", date: "2026-03-27" }],
+    reviews: [
+      {
+        author: "Adaeze O.",
+        rating: 5,
+        title: "Exactly what I hoped for",
+        body: "The three stones catch light beautifully from every angle, being able to rotate it in 3D before buying sold me.",
+        date: "2026-03-27",
+      },
+    ],
   },
   {
     id: "jewelry-011",
@@ -304,8 +464,20 @@ export const jewelry = [
     sizeChart: null,
     sizes: null,
     colors: null,
-    images: { primary: image("silver-ring"), hover: image("silver-ring"), gallery: [image("silver-ring")] },
+    images: {
+      primary: image("silver-ring"),
+      hover: image("silver-ring"),
+      gallery: [image("silver-ring")],
+    },
     model3d: model("silver-ring"),
-    reviews: [{ author: "Funmilayo J.", rating: 4, title: "Good starter piece", body: "Comfortable and simple, exactly what I needed.", date: "2026-01-16" }],
+    reviews: [
+      {
+        author: "Funmilayo J.",
+        rating: 4,
+        title: "Good starter piece",
+        body: "Comfortable and simple, exactly what I needed.",
+        date: "2026-01-16",
+      },
+    ],
   },
 ];
