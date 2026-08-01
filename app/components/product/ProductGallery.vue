@@ -35,7 +35,9 @@
             @click="open3dViewer"
             ><i class="icon anm anm-play-r" aria-hidden="true"></i
           ></a>
-          <span class="tooltip-bubble">Click to view product in 3D</span>
+          <span class="tooltip-bubble" :class="{ 'is-auto-visible': showAutoTooltip }"
+            >Click to view product in 3D</span
+          >
         </span>
         <a
           href="javascript:void(0)"
@@ -82,6 +84,23 @@ const show3dViewer = ref(false);
 
 function open3dViewer() {
   show3dViewer.value = true;
+  showAutoTooltip.value = false;
+}
+
+// Surface the 3D-view tooltip on its own for a few seconds when the page
+// loads, rather than only on hover, so first-time visitors notice the
+// feature exists without having to discover it by accident.
+const showAutoTooltip = ref(false);
+let autoTooltipTimer = null;
+
+if (props.product.model3d) {
+  onMounted(() => {
+    showAutoTooltip.value = true;
+    autoTooltipTimer = setTimeout(() => {
+      showAutoTooltip.value = false;
+    }, 4000);
+  });
+  onBeforeUnmount(() => clearTimeout(autoTooltipTimer));
 }
 </script>
 
@@ -122,7 +141,8 @@ function open3dViewer() {
   border-top-color: #111;
 }
 .tooltip-wrap:hover .tooltip-bubble,
-.tooltip-wrap:focus-within .tooltip-bubble {
+.tooltip-wrap:focus-within .tooltip-bubble,
+.tooltip-bubble.is-auto-visible {
   opacity: 1;
   visibility: visible;
 }
