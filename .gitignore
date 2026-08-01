@@ -26,7 +26,3 @@ logs
 
 # Anonymous interaction-logging data (research participant data, not source)
 server/data/
-
-# 3D model assets (~550MB) - too large for a normal git repo without LFS.
-# Kept locally; not tracked in source control.
-public/models/
