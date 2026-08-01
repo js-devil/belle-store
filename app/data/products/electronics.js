@@ -364,7 +364,7 @@ export const electronics = [
     subcategory: null,
     title: "IKEA UPPHETTA Coffee/Tea Maker",
     brand: "IKEA",
-    priceUsd: 40.0,
+    priceUsd: 19.99,
     compareAtPriceUsd: null,
     rating: 4,
     reviewCount: 17,
