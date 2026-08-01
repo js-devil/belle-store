@@ -45,6 +45,20 @@
           </div>
           <p v-if="!hasError" class="viewer3d-hint">Drag to rotate &middot; Scroll or pinch to zoom</p>
 
+          <div v-if="colors && colors.length && !hasError" class="viewer3d-colors">
+            <button
+              v-for="color in colors"
+              :key="color.name"
+              type="button"
+              class="viewer3d-color-swatch"
+              :class="{ active: selectedColorName === color.name }"
+              :style="{ backgroundColor: color.hex }"
+              :title="color.name"
+              :aria-label="`View in ${color.name}`"
+              @click="selectColor(color)"
+            ></button>
+          </div>
+
           <div v-if="hasError" class="viewer3d-placeholder">
             <img :src="posterImage" :alt="productTitle" />
             <p class="viewer3d-message">
@@ -72,6 +86,7 @@ const props = defineProps({
   posterImage: { type: String, required: true },
   productTitle: { type: String, required: true },
   productSlug: { type: String, default: null },
+  colors: { type: Array, default: null },
 });
 const emit = defineEmits(["close"]);
 
@@ -83,13 +98,40 @@ const isFullscreen = ref(false);
 const isLoaded = ref(false);
 const loadPercent = ref(0);
 const hasError = ref(false);
+const selectedColorName = ref(props.colors?.[0]?.name ?? null);
 
 function handleProgress(event) {
   loadPercent.value = Math.round((event.detail?.totalProgress ?? 0) * 100);
 }
 
+function hexToRgb01(hex) {
+  const value = hex.replace("#", "");
+  const r = parseInt(value.substring(0, 2), 16) / 255;
+  const g = parseInt(value.substring(2, 4), 16) / 255;
+  const b = parseInt(value.substring(4, 6), 16) / 255;
+  return [r, g, b, 1];
+}
+
+// None of these GLBs ship KHR_materials_variants, so "choosing a colour"
+// isn't a matter of switching a baked-in variant - it's a live retint of
+// every material's base colour via model-viewer's material API instead.
+function applyColor(hex) {
+  const materials = viewerEl.value?.model?.materials;
+  if (!materials?.length) return;
+  const rgba = hexToRgb01(hex);
+  materials.forEach((material) => material.pbrMetallicRoughness?.setBaseColorFactor(rgba));
+}
+
+function selectColor(color) {
+  selectedColorName.value = color.name;
+  applyColor(color.hex);
+}
+
 function handleLoad() {
   isLoaded.value = true;
+  if (props.colors?.length) {
+    applyColor(props.colors[0].hex);
+  }
 }
 
 function handleError(event) {
@@ -245,6 +287,28 @@ onBeforeUnmount(() => {
   font-size: 12px;
   margin: 0;
   pointer-events: none;
+}
+.viewer3d-colors {
+  position: absolute;
+  bottom: 44px;
+  left: 0;
+  right: 0;
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  z-index: 5;
+}
+.viewer3d-color-swatch {
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  border: 2px solid rgba(255, 255, 255, 0.4);
+  cursor: pointer;
+  padding: 0;
+}
+.viewer3d-color-swatch.active {
+  border-color: #fff;
+  box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.3);
 }
 .viewer3d-placeholder {
   text-align: center;

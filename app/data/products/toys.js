@@ -122,7 +122,12 @@ export const toys = [
     description: "<p>A sturdy toy hammer styled after Norse mythology, a popular pick for kids into superhero and fantasy role play.</p>",
     details: ["Lightweight moulded design", "Textured grip handle", "Recommended ages 5+"],
     shippingReturns: SHIPPING_RETURNS,
-    sizeChart: null, sizes: null, colors: null,
+    sizeChart: null, sizes: null,
+    colors: [
+      { name: "Bronze", hex: "#8a6d3b" },
+      { name: "Blue", hex: "#2a5db0" },
+      { name: "Red", hex: "#c0392b" },
+    ],
     images: { primary: image("norse-hammer"), hover: image("norse-hammer"), gallery: [image("norse-hammer")] },
     model3d: model("norse-hammer"),
     reviews: [{ author: "Tolu S.", rating: 4, title: "Big hit for superhero play", body: "Held up to weeks of enthusiastic play, no cracks yet.", date: "2026-03-17" }],

@@ -42,7 +42,8 @@
           :class="{ active: selectedColor === color.name }"
           @click="selectedColor = color.name"
         >
-          <img :src="color.swatch" :alt="color.name" />
+          <img v-if="color.swatch" :src="color.swatch" :alt="color.name" />
+          <span v-else class="swatch-color" :style="{ backgroundColor: color.hex }"></span>
         </li>
       </ul>
     </div>
@@ -148,5 +149,28 @@ function handleAddToCart() {
 <style scoped>
 .wishlist-heart--filled {
   color: #e0245e;
+}
+/* The legacy .swatches li styling only targets the shop grid card context
+   (.grid-products .item .swatches li), so on the PDP these render unsized -
+   give the swatch circle (image or plain hex colour) explicit dimensions. */
+.swatches .swatch {
+  width: 28px;
+  height: 28px;
+  display: inline-block;
+  overflow: hidden;
+  cursor: pointer;
+  border: 2px solid transparent;
+}
+.swatches .swatch.rounded {
+  border-radius: 50%;
+}
+.swatches .swatch.active {
+  border-color: #111;
+}
+.swatches .swatch img,
+.swatches .swatch .swatch-color {
+  width: 100%;
+  height: 100%;
+  display: block;
 }
 </style>

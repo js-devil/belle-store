@@ -62,6 +62,7 @@
       :poster-image="product.images.primary"
       :product-title="product.title"
       :product-slug="product.slug"
+      :colors="product.colors"
       @close="show3dViewer = false"
     />
   </div>
