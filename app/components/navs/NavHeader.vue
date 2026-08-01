@@ -79,7 +79,11 @@
             </NuxtLink>
             <!--Minicart Popup-->
             <div id="header-cart" class="block block-cart">
-              <p v-if="items.length === 0" class="text-center">Your cart is empty.</p>
+              <div v-if="items.length === 0" class="mini-cart-empty text-center">
+                <i class="icon anm anm-bag-l"></i>
+                <p>Your cart is empty.</p>
+                <NuxtLink to="/shop" class="btn btn-secondary btn--small">Browse Products</NuxtLink>
+              </div>
               <ul v-else class="mini-products-list">
                 <li v-for="item in items" :key="item.key" class="item">
                   <a class="product-image" href="#">
@@ -106,7 +110,7 @@
                   </div>
                 </li>
               </ul>
-              <div class="total">
+              <div v-if="items.length" class="total">
                 <div class="total-in">
                   <span class="label">Cart Subtotal:</span
                   ><span class="product-price"
@@ -142,3 +146,19 @@ import { categories } from "@/data/categories.js";
 const { items, itemCount, subtotalUsd, removeFromCart } = useCart();
 const { formatPrice } = useCurrency();
 </script>
+
+<style scoped>
+.mini-cart-empty {
+  padding: 24px 16px;
+}
+.mini-cart-empty .icon {
+  font-size: 32px;
+  color: #c3c2b7;
+  display: block;
+  margin-bottom: 10px;
+}
+.mini-cart-empty p {
+  color: #767676;
+  margin-bottom: 14px;
+}
+</style>

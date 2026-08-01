@@ -1,8 +1,13 @@
 <template>
   <div class="cart-table-wrap">
-    <p v-if="items.length === 0" class="text-center">
-      Your cart is empty. <NuxtLink to="/shop">Continue shopping</NuxtLink>
-    </p>
+    <EmptyState
+      v-if="items.length === 0"
+      icon="anm-bag-l"
+      title="Your cart is empty"
+      message="Browse the catalog and add items to see them here."
+      cta-text="Browse Products"
+      cta-link="/shop"
+    />
     <table v-else class="cart style2">
       <thead class="cart__row cart__header">
         <tr>
