@@ -88,7 +88,12 @@ function open3dViewer() {
 <style scoped>
 .tooltip-wrap {
   position: relative;
-  display: inline-block;
+  /* .product-buttons .btn elements stack vertically via float:right + clear:both
+     (see style.css) - this wrapper must join that same float stack, otherwise
+     it sits in normal flow and the plain .btn sibling below (zoom) floats
+     above/beside it instead of stacking underneath as intended. */
+  float: right;
+  clear: both;
 }
 .tooltip-bubble {
   position: absolute;
