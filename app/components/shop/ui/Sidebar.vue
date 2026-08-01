@@ -10,7 +10,6 @@
       <ColorSwatches v-if="colors.length" :colors="colors" />
       <BrandsWidget v-if="brands.length" :brands="brands" />
       <PopularProducts :products="popularProducts" />
-      <StaticBanner image="/images/side-banner-2.jpg" alt="Side banner" />
       <InformationWidget />
       <ProductTagsWidget v-if="tags.length" :tags="tags" />
     </div>
