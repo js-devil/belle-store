@@ -1,8 +1,4 @@
-import { appendFile, mkdir } from "node:fs/promises";
-import { join } from "node:path";
-
-const DATA_DIR = join(process.cwd(), "server", "data");
-const LOG_FILE = join(DATA_DIR, "interaction-events.jsonl");
+import { getStore } from "@netlify/blobs";
 
 const VALID_TYPES = new Set([
   "page_view",
@@ -29,8 +25,14 @@ export default defineEventHandler(async (event) => {
     timestamp: new Date().toISOString(),
   };
 
-  await mkdir(DATA_DIR, { recursive: true });
-  await appendFile(LOG_FILE, JSON.stringify(record) + "\n", "utf-8");
+  // One blob per event (keyed uniquely) rather than appending to a single
+  // growing blob - Netlify's serverless functions have no shared/writable
+  // filesystem between invocations, and a single-blob read-modify-write
+  // would lose events under concurrent traffic. The analytics/summary
+  // endpoint lists and aggregates every blob in this store.
+  const store = getStore("interaction-events");
+  const key = `${record.timestamp}-${crypto.randomUUID()}`;
+  await store.setJSON(key, record);
 
   return { ok: true };
 });

@@ -1,7 +1,4 @@
-import { readFile } from "node:fs/promises";
-import { join } from "node:path";
-
-const LOG_FILE = join(process.cwd(), "server", "data", "interaction-events.jsonl");
+import { getStore } from "@netlify/blobs";
 
 function topEntries(counts: Record<string, number>, limit = 10) {
   return Object.entries(counts)
@@ -11,24 +8,18 @@ function topEntries(counts: Record<string, number>, limit = 10) {
 }
 
 export default defineEventHandler(async () => {
-  let raw = "";
-  try {
-    raw = await readFile(LOG_FILE, "utf-8");
-  } catch {
-    // No events logged yet.
-  }
+  const store = getStore("interaction-events");
 
-  const events = raw
-    .split("\n")
-    .filter(Boolean)
-    .map((line) => {
-      try {
-        return JSON.parse(line);
-      } catch {
-        return null;
-      }
-    })
-    .filter(Boolean);
+  // Paginate through every blob in the store (a single list() call caps out
+  // at a page size well below what a full study's worth of events could
+  // reach), then read each one back as JSON.
+  const keys: string[] = [];
+  for await (const page of store.list({ paginate: true })) {
+    for (const blob of page.blobs) keys.push(blob.key);
+  }
+  const events = (await Promise.all(keys.map((key) => store.get(key, { type: "json" })))).filter(
+    Boolean
+  );
 
   const sessions = new Set();
   const pageViewsByPath = {};

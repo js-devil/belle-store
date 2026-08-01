@@ -23,6 +23,3 @@ logs
 .env.*
 !.env.example
 .vscode/
-
-# Anonymous interaction-logging data (research participant data, not source)
-server/data/
