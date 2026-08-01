@@ -88,3 +88,48 @@ onMounted(() => {
   });
 });
 </script>
+
+<style scoped>
+/* The legacy .slideshow__overlay:before gradient only darkens the bottom
+   ~50% of the image at 0.5 opacity, and isn't positioned reliably (its own
+   ancestor never sets position:relative) - not enough contrast for the
+   white hero text over lighter photos. Layer a dependable scrim of our own
+   over the whole slide, sitting above the image but below the text. */
+/* jQuery/slick.js loads as a global <script> tag and can take a couple of
+   seconds to initialize, during which every .slide would otherwise render
+   stacked in normal flow (all images visible at once) until slick adds
+   .slick-initialized and takes over positioning. Show only the first slide
+   as a plain static image until then, so it reads as "loaded" immediately
+   instead of flashing every slide before collapsing into a slider. */
+.home-slideshow:not(.slick-initialized) .slide {
+  display: none;
+}
+.home-slideshow:not(.slick-initialized) .slide:first-child {
+  display: block;
+}
+.slide {
+  position: relative;
+}
+.slide::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.35);
+  z-index: 2;
+  pointer-events: none;
+}
+.slideshow__text-wrap {
+  position: relative;
+  z-index: 3;
+}
+
+@media (max-width: 767px) {
+  .mega-title.slideshow__title {
+    font-size: 28px;
+    line-height: 1.2;
+  }
+  .mega-subtitle.slideshow__subtitle {
+    font-size: 14px;
+  }
+}
+</style>

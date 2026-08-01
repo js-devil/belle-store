@@ -28,7 +28,7 @@ const faqGroups = [
       {
         question: "Can I view prices in Naira or US Dollars?",
         answer:
-          "Yes. Use the country selector in the top bar to switch between Nigeria (₦) and United States ($). Prices update across the whole site, including your cart and wishlist.",
+          "Yes. Use the country selector in the top bar to switch between Nigeria (Naira, ₦) and United States (US Dollars, $). Prices update instantly across the whole site, including product pages, your cart and your wishlist, and your choice is remembered on your next visit.",
       },
       {
         question: "Do I need an account to shop?",
@@ -46,14 +46,19 @@ const faqGroups = [
           "Every shoe product page has a Size Chart tab with foot-length measurements for each available size, alongside the size selector.",
       },
       {
-        question: "When will 3D product views be available?",
+        question: "How does the 3D product viewer work?",
         answer:
-          "The product pages already have a 3D preview button (the play icon next to the main image). 3D models are being added to the catalog progressively as part of the ongoing research - for now it shows a coming-soon placeholder.",
+          "Products with a 3D model show a play button next to the main photo - tap or click it to open an interactive viewer. Drag (or swipe on touch devices) to rotate the model, scroll or pinch to zoom, and use the expand icon for a fullscreen view. Some products also let you preview different colour options directly on the 3D model.",
       },
       {
-        question: "Some categories show a placeholder image instead of a photo - why?",
+        question: "Which products have a 3D preview?",
         answer:
-          "We're still sourcing final photography and 3D models for a few categories. Product information for those items is complete and ready to go - only the imagery is a placeholder until it's replaced.",
+          "3D models are available for a growing selection of items across shoes, furniture, jewelry, electronics, bikes and toys. If a product doesn't have a 3D model yet, the play button is simply hidden on that product page - the 2D photos are always available either way.",
+      },
+      {
+        question: "Some products show a placeholder image instead of a photo - why?",
+        answer:
+          "We're still sourcing final photography for a small number of items. Product information for those items is complete and ready to go - only the imagery is a placeholder until it's replaced.",
       },
     ],
   },

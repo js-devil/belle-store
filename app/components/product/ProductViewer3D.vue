@@ -28,7 +28,7 @@
             :poster="posterImage"
             :alt="productTitle"
             camera-controls
-            touch-action="pan-y"
+            touch-action="none"
             shadow-intensity="1"
             exposure="1"
             class="viewer3d-model"
@@ -38,25 +38,35 @@
             @error="handleError"
           ></model-viewer>
 
-          <!-- Sleek, simple loading indicator: a thin linear bar rather than a
-               spinner, since some models are 10MB+ and a spinner reads as "stuck". -->
-          <div v-if="!isLoaded && !hasError" class="viewer3d-progress-track">
-            <div class="viewer3d-progress-fill" :style="{ width: `${loadPercent}%` }"></div>
+          <!-- Sleek, simple loading indicator: a slim bar rather than a
+               spinner (some models are 10MB+ and a spinner reads as "stuck"),
+               centered with a short status line rather than pinned to an edge. -->
+          <div v-if="!isLoaded && !hasError" class="viewer3d-loading">
+            <div class="viewer3d-loading__bar">
+              <div class="viewer3d-loading__fill" :style="{ width: `${loadPercent}%` }"></div>
+            </div>
+            <p class="viewer3d-loading__text">Loading 3D model&hellip; {{ loadPercent }}%</p>
           </div>
-          <p v-if="!hasError" class="viewer3d-hint">Drag to rotate &middot; Scroll or pinch to zoom</p>
+          <p v-if="!hasError && !(colors && colors.length)" class="viewer3d-hint">
+            Drag to rotate &middot; Scroll or pinch to zoom
+          </p>
 
           <div v-if="colors && colors.length && !hasError" class="viewer3d-colors">
-            <button
-              v-for="color in colors"
-              :key="color.name"
-              type="button"
-              class="viewer3d-color-swatch"
-              :class="{ active: selectedColorName === color.name }"
-              :style="{ backgroundColor: color.hex }"
-              :title="color.name"
-              :aria-label="`View in ${color.name}`"
-              @click="selectColor(color)"
-            ></button>
+            <p class="viewer3d-colors__label">Choose a colour:</p>
+            <div class="viewer3d-colors__row">
+              <button
+                v-for="color in colors"
+                :key="color.name"
+                type="button"
+                class="viewer3d-color-swatch"
+                :class="{ active: selectedColorName === color.name }"
+                :style="{ backgroundColor: color.hex }"
+                :title="color.name"
+                :aria-label="`View in ${color.name}`"
+                @click="selectColor(color)"
+              ></button>
+            </div>
+            <p class="viewer3d-colors__selected">{{ selectedColorName }}</p>
           </div>
 
           <div v-if="hasError" class="viewer3d-placeholder">
@@ -144,17 +154,13 @@ function handleError(event) {
   isLoaded.value = true;
 }
 
-async function toggleFullscreen() {
-  if (!panelEl.value) return;
-  if (document.fullscreenElement) {
-    await document.exitFullscreen();
-  } else {
-    await panelEl.value.requestFullscreen();
-  }
-}
-
-function handleFullscreenChange() {
-  isFullscreen.value = document.fullscreenElement === panelEl.value;
+// The native Fullscreen API is unreliable on mobile browsers (notably iOS
+// Safari, which doesn't support it on arbitrary elements at all), which is
+// why the expand button "sometimes doesn't respond" on mobile. Toggling this
+// flag and relying purely on the .is-fullscreen CSS class below works
+// everywhere since it never depends on browser fullscreen support.
+function toggleFullscreen() {
+  isFullscreen.value = !isFullscreen.value;
 }
 
 // Classify each camera-change as a rotation (theta/phi moved) or a zoom
@@ -194,11 +200,7 @@ function handleClose() {
   emit("close");
 }
 
-onMounted(() => {
-  document.addEventListener("fullscreenchange", handleFullscreenChange);
-});
 onBeforeUnmount(() => {
-  document.removeEventListener("fullscreenchange", handleFullscreenChange);
   clearTimeout(gestureTimer);
 });
 </script>
@@ -263,19 +265,34 @@ onBeforeUnmount(() => {
   height: 100%;
   --poster-color: transparent;
 }
-.viewer3d-progress-track {
+.viewer3d-loading {
   position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 3px;
-  background: rgba(255, 255, 255, 0.15);
-  z-index: 5;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  background: rgba(0, 0, 0, 0.45);
+  z-index: 4;
+  pointer-events: none;
 }
-.viewer3d-progress-fill {
+.viewer3d-loading__bar {
+  width: 160px;
+  height: 4px;
+  border-radius: 2px;
+  background: rgba(255, 255, 255, 0.2);
+  overflow: hidden;
+}
+.viewer3d-loading__fill {
   height: 100%;
   background: #fff;
   transition: width 0.15s ease-out;
+}
+.viewer3d-loading__text {
+  color: rgba(255, 255, 255, 0.85);
+  font-size: 13px;
+  margin: 0;
 }
 .viewer3d-hint {
   position: absolute;
@@ -290,25 +307,43 @@ onBeforeUnmount(() => {
 }
 .viewer3d-colors {
   position: absolute;
-  bottom: 44px;
+  bottom: 14px;
   left: 0;
   right: 0;
   display: flex;
-  justify-content: center;
-  gap: 10px;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
   z-index: 5;
 }
+.viewer3d-colors__label {
+  color: rgba(255, 255, 255, 0.75);
+  font-size: 12px;
+  margin: 0;
+}
+.viewer3d-colors__row {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+}
 .viewer3d-color-swatch {
-  width: 26px;
-  height: 26px;
+  width: 34px;
+  height: 34px;
   border-radius: 50%;
-  border: 2px solid rgba(255, 255, 255, 0.4);
+  border: 3px solid rgba(255, 255, 255, 0.5);
   cursor: pointer;
   padding: 0;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.4);
 }
 .viewer3d-color-swatch.active {
   border-color: #fff;
-  box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.3);
+  box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.35);
+}
+.viewer3d-colors__selected {
+  color: #fff;
+  font-size: 12px;
+  font-weight: 600;
+  margin: 0;
 }
 .viewer3d-placeholder {
   text-align: center;

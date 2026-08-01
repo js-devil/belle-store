@@ -12,11 +12,18 @@ export default defineNuxtConfig({
     },
   },
 
+  // Order matters: style.css and responsive.css both define unconditional vs.
+  // media-query rules for the same selectors (e.g. .mobile-nav-wrapper), with
+  // identical specificity - CSS resolves the tie by source order. The
+  // original template (home7-shoes.html) loads style.css before
+  // responsive.css so responsive.css's mobile overrides win; loading them in
+  // the opposite order (as this used to) makes style.css's base rules always
+  // win instead, permanently hiding mobile-only UI like the nav drawer.
   css: [
     "~/assets/css/bootstrap.min.css",
     "~/assets/css/plugins.css",
-    "~/assets/css/responsive.css",
     "~/assets/css/style.css",
+    "~/assets/css/responsive.css",
   ],
 
   // Enable global imports

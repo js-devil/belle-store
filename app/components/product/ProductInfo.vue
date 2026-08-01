@@ -32,22 +32,6 @@
 
     <div class="product-single__description rte" v-html="product.description"></div>
 
-    <div v-if="product.colors && product.colors.length" class="product-form__item">
-      <label>Color: <strong>{{ selectedColor }}</strong></label>
-      <ul class="swatches">
-        <li
-          v-for="color in product.colors"
-          :key="color.name"
-          class="swatch medium rounded"
-          :class="{ active: selectedColor === color.name }"
-          @click="selectedColor = color.name"
-        >
-          <img v-if="color.swatch" :src="color.swatch" :alt="color.name" />
-          <span v-else class="swatch-color" :style="{ backgroundColor: color.hex }"></span>
-        </li>
-      </ul>
-    </div>
-
     <div v-if="product.sizes && product.sizes.length" class="product-form__item">
       <label
         >Size: <strong>{{ selectedSize }}</strong>

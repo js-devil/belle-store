@@ -151,6 +151,18 @@ const { isMobileNavOpen, toggleMobileNav, toggleSearch } = useUiState();
 </script>
 
 <style scoped>
+/* .container-fluid's global 0 55px side padding (style.css) is quite wide
+   for the header specifically - narrow it here rather than touching the
+   shared class, since other sections (e.g. the footer) rely on the wider
+   default. */
+.header-wrap > .container-fluid {
+  padding: 0 20px;
+}
+@media (max-width: 767px) {
+  .header-wrap > .container-fluid {
+    padding: 0 12px;
+  }
+}
 .mini-cart-empty {
   padding: 24px 16px;
 }

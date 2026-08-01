@@ -122,9 +122,9 @@ export const toys = [
     shippingReturns: SHIPPING_RETURNS,
     sizeChart: null, sizes: null,
     colors: [
-      { name: "Bronze", hex: "#8a6d3b" },
-      { name: "Blue", hex: "#2a5db0" },
-      { name: "Red", hex: "#c0392b" },
+      { name: "Bronze", hex: "#a3742f" },
+      { name: "Blue", hex: "#1d5fd1" },
+      { name: "Red", hex: "#d62828" },
     ],
     images: { primary: image("norse-hammer"), hover: image("norse-hammer"), gallery: [image("norse-hammer")] },
     model3d: model("norse-hammer"),

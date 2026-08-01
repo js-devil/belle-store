@@ -72,6 +72,14 @@ onBeforeUnmount(() => document.removeEventListener("click", handleClickOutside))
 </script>
 
 <style scoped>
+.top-header > .container-fluid {
+  padding: 0 20px;
+}
+@media (max-width: 767px) {
+  .top-header > .container-fluid {
+    padding: 0 12px;
+  }
+}
 .country-option {
   display: flex;
   align-items: center;

@@ -147,4 +147,40 @@ if (props.product.model3d) {
   opacity: 1;
   visibility: visible;
 }
+
+/* Desktop lays the gallery out with plain floats (.product-thumb at 12.5%
+   width, .product-zoom-right at 87%, both float:left - see style.css) with
+   no mobile override at all, so on a narrow screen the thumbnail rail
+   squeezes into a sliver beside the main image instead of stacking.
+   Reflow with flex + order on mobile: main image on top, thumbnails as a
+   row underneath, without changing DOM order (which the click/active-state
+   logic doesn't need to change). */
+@media (max-width: 767px) {
+  .product-details-img {
+    display: flex;
+    flex-direction: column;
+  }
+  .product-thumb {
+    width: 100%;
+    float: none;
+    order: 2;
+    padding-right: 0;
+    margin-top: 12px;
+  }
+  .product-dec-slider-2 {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  .product-dec-slider-2 a {
+    width: 60px;
+    height: 60px;
+  }
+  .zoompro-wrap {
+    width: 100%;
+    float: none;
+    order: 1;
+    padding-left: 0 !important;
+  }
+}
 </style>
