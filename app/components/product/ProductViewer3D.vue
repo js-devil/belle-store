@@ -10,7 +10,7 @@
             :title="isFullscreen ? 'Exit fullscreen' : 'Fullscreen'"
             @click="toggleFullscreen"
           >
-            <i :class="isFullscreen ? 'anm anm-compress-l' : 'anm anm-expand-l-arrows'"></i>
+            <i :class="isFullscreen ? 'anm anm-compress-alt' : 'anm anm-expand-l-arrows'"></i>
           </button>
           <button type="button" class="viewer3d-icon-btn viewer3d-close" title="Close" @click="handleClose">
             <i class="anm anm-times-l"></i>
