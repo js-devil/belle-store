@@ -1,8 +1,6 @@
 const SHIPPING_RETURNS = `<p>Toys ship within 2 business days. Unopened items can be returned within 14 days
 of delivery. All items meet standard safety requirements for their listed age range.</p>`;
 
-const PLACEHOLDER = "/images/products/placeholders/toys.svg";
-
 function model(file) {
   return `/models/toys/${file}.glb`;
 }
@@ -151,9 +149,11 @@ export const toys = [
     details: ["Low-profile aerodynamic body", "Smooth-rolling wheels", "Recommended ages 3+"],
     shippingReturns: SHIPPING_RETURNS,
     sizeChart: null, sizes: null, colors: null,
-    // No matching .jpg was provided for this product yet - falls back to the
-    // category placeholder image until real photography is added.
-    images: { primary: PLACEHOLDER, hover: PLACEHOLDER, gallery: [PLACEHOLDER] },
+    images: {
+      primary: "/models/toys/race-car-toy.jpg",
+      hover: "/models/toys/race-car-toy.jpg",
+      gallery: ["/models/toys/race-car-toy.jpg"],
+    },
     model3d: model("race_car"),
     reviews: [{ author: "Precious A.", rating: 4, title: "Fast little car", body: "My kids race these down the hallway, well built.", date: "2026-01-13" }],
   },
@@ -268,8 +268,11 @@ export const toys = [
     details: ["Moving wheels and pedals", "Detailed miniature frame", "Recommended ages 4+"],
     shippingReturns: SHIPPING_RETURNS,
     sizeChart: null, sizes: null, colors: null,
-    // No matching .jpg was provided for this product yet.
-    images: { primary: PLACEHOLDER, hover: PLACEHOLDER, gallery: [PLACEHOLDER] },
+    images: {
+      primary: "/models/toys/toy-bicycle.jpg",
+      hover: "/models/toys/toy-bicycle.jpg",
+      gallery: ["/models/toys/toy-bicycle.jpg"],
+    },
     model3d: model("toy_bike"),
     reviews: [{ author: "Ngozi I.", rating: 4, title: "Cute detail", body: "Small but well detailed, good gift item.", date: "2026-02-03" }],
   },
