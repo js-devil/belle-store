@@ -49,12 +49,9 @@
 </template>
 
 <script setup>
-const { country, setCountry } = useCurrency();
+import { COUNTRIES } from "@/composables/useCurrency.js";
 
-const COUNTRIES = {
-  NG: { label: "Nigeria", currency: "NGN", flag: "🇳🇬" },
-  US: { label: "United States", currency: "USD", flag: "🇺🇸" },
-};
+const { country, setCountry } = useCurrency();
 
 const isOpen = ref(false);
 const pickerEl = ref(null);
