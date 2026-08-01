@@ -1,8 +1,13 @@
 <template>
   <div class="wishlist-table table-content table-responsive">
-    <p v-if="items.length === 0" class="text-center">
-      Your wishlist is empty. <NuxtLink to="/shop">Browse products</NuxtLink>
-    </p>
+    <EmptyState
+      v-if="items.length === 0"
+      icon="anm-heart-l"
+      title="Your wishlist is empty"
+      message="Tap the heart icon on any product to save it here for later."
+      cta-text="Browse Products"
+      cta-link="/shop"
+    />
     <table v-else class="table table-bordered">
       <thead>
         <tr>
