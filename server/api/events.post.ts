@@ -1,5 +1,13 @@
 import { getStore } from "@netlify/blobs";
 
+// A short random suffix for the blob key - doesn't need to be
+// cryptographically random, just unique enough to avoid same-millisecond
+// collisions, so this avoids depending on Node's global `crypto` (and the
+// @types/node install that would otherwise be needed just for that).
+function randomSuffix() {
+  return Math.random().toString(36).slice(2, 10);
+}
+
 const VALID_TYPES = new Set([
   "page_view",
   "time_on_page",
@@ -31,7 +39,7 @@ export default defineEventHandler(async (event) => {
   // would lose events under concurrent traffic. The analytics/summary
   // endpoint lists and aggregates every blob in this store.
   const store = getStore("interaction-events");
-  const key = `${record.timestamp}-${crypto.randomUUID()}`;
+  const key = `${record.timestamp}-${randomSuffix()}`;
   await store.setJSON(key, record);
 
   return { ok: true };
