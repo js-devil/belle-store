@@ -4,6 +4,14 @@ export default defineNuxtConfig({
   devtools: { enabled: true },
   // ssr: false,
 
+  vue: {
+    compilerOptions: {
+      // <model-viewer> is a Web Component registered by @google/model-viewer,
+      // not a Vue component - tell the compiler not to warn about it.
+      isCustomElement: (tag) => tag === "model-viewer",
+    },
+  },
+
   css: [
     "~/assets/css/bootstrap.min.css",
     "~/assets/css/plugins.css",

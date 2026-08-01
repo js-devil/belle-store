@@ -11,47 +11,48 @@ export const categories = [
   {
     slug: "shoes",
     label: "Shoes",
-    tileImage: "/images/collection/shoes.jpg",
-    description: "Everyday sneakers, sandals and heels for every occasion.",
+    tileImage: "/models/footwear/sneakers/nike_air_zoom_pegasus_36.jpg",
+    description: "Men's, women's and sneaker styles for every occasion.",
   },
   {
     slug: "furniture",
     label: "Furniture",
-    tileImage: "/images/products/furniture/blush-dome-pendant-lamp/main.jpg",
+    tileImage: "/models/furniture/living_room_sofa__furniture.jpg",
     description: "Chairs, tables and lighting to furnish any room.",
   },
   {
     slug: "jewelry",
     label: "Jewelry",
-    tileImage: "/images/collection/jewellry.jpg",
-    description: "Necklaces, earrings and bracelets for every look.",
+    tileImage: "/models/jewelry/avalon_mcqueeny_ring.jpg",
+    description: "Rings, pendants and bridal sets for every look.",
   },
   {
     slug: "electronics",
     label: "Electronics",
-    tileImage: "/images/products/placeholders/electronics.svg",
-    description: "Everyday gadgets and accessories for home and on the go.",
+    tileImage: "/models/electronics/flat_television.jpg",
+    description: "Everyday appliances and gadgets for the home.",
   },
   {
     slug: "bikes",
     label: "Bikes",
-    tileImage: "/images/products/placeholders/bikes.svg",
-    description: "Bicycles and cycling accessories for the city and the trail.",
+    tileImage: "/models/bikes/sports_bike.jpg",
+    description: "Bicycles, motorcycles and scooters for the city and beyond.",
   },
   {
     slug: "toys",
     label: "Toys",
-    tileImage: "/images/products/placeholders/toys.svg",
+    tileImage: "/models/toys/red_speed_car.jpg",
     description: "Toys and games for kids of every age.",
-  },
-  {
-    slug: "statues",
-    label: "Statues",
-    tileImage: "/images/products/placeholders/statues.svg",
-    description: "Decorative statues and sculptures for home and garden.",
   },
 ];
 
 export function getCategoryBySlug(slug) {
   return categories.find((category) => category.slug === slug);
 }
+
+/** @type {{slug: string, label: string}[]} */
+export const shoeSubcategories = [
+  { slug: "male", label: "Men's Shoes" },
+  { slug: "female", label: "Women's Shoes" },
+  { slug: "sneakers", label: "Sneakers" },
+];

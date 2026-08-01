@@ -1,16 +1,51 @@
 <template>
   <Teleport to="body">
-    <div class="viewer3d-overlay" @click.self="$emit('close')">
-      <div class="viewer3d-panel">
-        <button type="button" class="viewer3d-close" @click="$emit('close')">
-          <i class="anm anm-times-l"></i>
-        </button>
-        <!--
-          RESERVED: when modelData is populated with a real GLB/USDZ asset, this panel
-          should render an actual 3D viewer (e.g. <model-viewer> or a three.js canvas)
-          instead of this placeholder. No 3D rendering is implemented yet.
-        -->
-        <div v-if="!modelData" class="viewer3d-placeholder">
+    <div class="viewer3d-overlay" @click.self="handleClose">
+      <div ref="panelEl" class="viewer3d-panel" :class="{ 'is-fullscreen': isFullscreen }">
+        <div class="viewer3d-toolbar">
+          <button
+            v-if="modelSrc"
+            type="button"
+            class="viewer3d-icon-btn"
+            :title="isFullscreen ? 'Exit fullscreen' : 'Fullscreen'"
+            @click="toggleFullscreen"
+          >
+            <i :class="isFullscreen ? 'anm anm-compress-l' : 'anm anm-expand-l-arrows'"></i>
+          </button>
+          <button type="button" class="viewer3d-icon-btn viewer3d-close" title="Close" @click="handleClose">
+            <i class="anm anm-times-l"></i>
+          </button>
+        </div>
+
+        <!-- Real 3D model: model-viewer gives free mouse/touch orbit-drag rotation
+             (both axes) and scroll/pinch zoom via camera-controls - no custom
+             gesture handling needed for the core interaction. -->
+        <template v-if="modelSrc">
+          <model-viewer
+            ref="viewerEl"
+            :src="modelSrc"
+            :poster="posterImage"
+            :alt="productTitle"
+            camera-controls
+            touch-action="pan-y"
+            shadow-intensity="1"
+            exposure="1"
+            class="viewer3d-model"
+            @progress="handleProgress"
+            @camera-change="handleCameraChange"
+            @load="handleLoad"
+          ></model-viewer>
+
+          <!-- Sleek, simple loading indicator: a thin linear bar rather than a
+               spinner, since some models are 10MB+ and a spinner reads as "stuck". -->
+          <div v-if="!isLoaded" class="viewer3d-progress-track">
+            <div class="viewer3d-progress-fill" :style="{ width: `${loadPercent}%` }"></div>
+          </div>
+          <p class="viewer3d-hint">Drag to rotate &middot; Scroll or pinch to zoom</p>
+        </template>
+
+        <!-- No 3D asset sourced yet for this product - graceful placeholder. -->
+        <div v-else class="viewer3d-placeholder">
           <img :src="posterImage" :alt="productTitle" />
           <p class="viewer3d-message">
             Interactive 3D preview coming soon for <strong>{{ productTitle }}</strong
@@ -23,19 +58,94 @@
 </template>
 
 <script setup>
-defineProps({
-  modelData: { type: Object, default: null },
+const props = defineProps({
+  modelSrc: { type: String, default: null },
   posterImage: { type: String, required: true },
   productTitle: { type: String, required: true },
+  productSlug: { type: String, default: null },
 });
-defineEmits(["close"]);
+const emit = defineEmits(["close"]);
+
+const { logEvent } = useAnalytics();
+
+const panelEl = ref(null);
+const viewerEl = ref(null);
+const isFullscreen = ref(false);
+const isLoaded = ref(false);
+const loadPercent = ref(0);
+
+function handleProgress(event) {
+  loadPercent.value = Math.round((event.detail?.totalProgress ?? 0) * 100);
+}
+
+function handleLoad() {
+  isLoaded.value = true;
+}
+
+async function toggleFullscreen() {
+  if (!panelEl.value) return;
+  if (document.fullscreenElement) {
+    await document.exitFullscreen();
+  } else {
+    await panelEl.value.requestFullscreen();
+  }
+}
+
+function handleFullscreenChange() {
+  isFullscreen.value = document.fullscreenElement === panelEl.value;
+}
+
+// Classify each camera-change as a rotation (theta/phi moved) or a zoom
+// (radius moved), and debounce so one continuous drag/pinch gesture counts
+// as a single logged event rather than one per animation frame.
+let lastOrbit = null;
+let gestureTimer = null;
+let gestureKind = null;
+const GESTURE_IDLE_MS = 400;
+
+function handleCameraChange(event) {
+  if (event.detail?.source !== "user-interaction") return;
+  const orbit = viewerEl.value?.getCameraOrbit?.();
+  if (!orbit) return;
+
+  if (lastOrbit) {
+    const rotated =
+      Math.abs(orbit.theta - lastOrbit.theta) > 0.001 ||
+      Math.abs(orbit.phi - lastOrbit.phi) > 0.001;
+    const zoomed = Math.abs(orbit.radius - lastOrbit.radius) > 0.001;
+
+    if (zoomed) gestureKind = "zoom_event";
+    else if (rotated && gestureKind !== "zoom_event") gestureKind = "rotate_gesture";
+  }
+  lastOrbit = orbit;
+
+  clearTimeout(gestureTimer);
+  gestureTimer = setTimeout(() => {
+    if (gestureKind) {
+      logEvent(gestureKind, { slug: props.productSlug });
+    }
+    gestureKind = null;
+  }, GESTURE_IDLE_MS);
+}
+
+function handleClose() {
+  emit("close");
+}
+
+onMounted(() => {
+  document.addEventListener("fullscreenchange", handleFullscreenChange);
+});
+onBeforeUnmount(() => {
+  document.removeEventListener("fullscreenchange", handleFullscreenChange);
+  clearTimeout(gestureTimer);
+});
 </script>
 
 <style scoped>
 .viewer3d-overlay {
   position: fixed;
   inset: 0;
-  background: rgba(0, 0, 0, 0.7);
+  background: rgba(0, 0, 0, 0.85);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -43,23 +153,82 @@ defineEmits(["close"]);
 }
 .viewer3d-panel {
   position: relative;
-  background: #fff;
+  background: #111;
   border-radius: 4px;
-  max-width: 90vw;
-  width: 480px;
-  padding: 32px;
+  width: 90vw;
+  max-width: 900px;
+  height: 80vh;
+  max-height: 700px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
 }
-.viewer3d-close {
+.viewer3d-panel.is-fullscreen {
+  width: 100vw;
+  height: 100vh;
+  max-width: none;
+  max-height: none;
+  border-radius: 0;
+}
+.viewer3d-toolbar {
   position: absolute;
   top: 10px;
   right: 10px;
-  background: none;
+  display: flex;
+  gap: 8px;
+  z-index: 5;
+}
+.viewer3d-icon-btn {
+  background: rgba(255, 255, 255, 0.12);
   border: none;
-  font-size: 20px;
+  color: #fff;
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  font-size: 16px;
   cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.viewer3d-icon-btn:hover {
+  background: rgba(255, 255, 255, 0.25);
+}
+.viewer3d-model {
+  width: 100%;
+  height: 100%;
+  --poster-color: transparent;
+}
+.viewer3d-progress-track {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: rgba(255, 255, 255, 0.15);
+  z-index: 5;
+}
+.viewer3d-progress-fill {
+  height: 100%;
+  background: #fff;
+  transition: width 0.15s ease-out;
+}
+.viewer3d-hint {
+  position: absolute;
+  bottom: 14px;
+  left: 0;
+  right: 0;
+  text-align: center;
+  color: rgba(255, 255, 255, 0.65);
+  font-size: 12px;
+  margin: 0;
+  pointer-events: none;
 }
 .viewer3d-placeholder {
   text-align: center;
+  padding: 32px;
 }
 .viewer3d-placeholder img {
   max-width: 220px;
@@ -69,6 +238,6 @@ defineEmits(["close"]);
   margin-bottom: 16px;
 }
 .viewer3d-message {
-  color: #555;
+  color: #ccc;
 }
 </style>

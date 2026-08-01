@@ -4,7 +4,6 @@ import { furniture } from "./products/furniture.js";
 import { bikes } from "./products/bikes.js";
 import { electronics } from "./products/electronics.js";
 import { toys } from "./products/toys.js";
-import { statues } from "./products/statues.js";
 
 export { categories, getCategoryBySlug } from "./categories.js";
 
@@ -46,7 +45,9 @@ export { categories, getCategoryBySlug } from "./categories.js";
  * @property {string[]|null} sizes
  * @property {{name:string, swatch:string}[]|null} colors
  * @property {ProductImages} images
- * @property {object|null} model3d - RESERVED for a future GLB/USDZ asset. Always null today.
+ * @property {string|null} model3d - path to a .glb asset, or null if none has been sourced yet
+ *   (the 3D viewer falls back to a "coming soon" placeholder for null).
+ * @property {string|null} subcategory - e.g. "male"|"female"|"sneakers" for shoes; null otherwise.
  * @property {ProductReview[]} reviews
  */
 
@@ -58,16 +59,21 @@ export const products = [
   ...electronics,
   ...bikes,
   ...toys,
-  ...statues,
 ];
 
 export function getProductBySlug(slug) {
   return products.find((product) => product.slug === slug);
 }
 
-export function getProductsByCategory(categorySlug) {
-  if (!categorySlug) return products;
-  return products.filter((product) => product.category === categorySlug);
+export function getProductsByCategory(categorySlug, subcategorySlug) {
+  let result = products;
+  if (categorySlug) {
+    result = result.filter((product) => product.category === categorySlug);
+  }
+  if (subcategorySlug) {
+    result = result.filter((product) => product.subcategory === subcategorySlug);
+  }
+  return result;
 }
 
 export function getRelatedProducts(product, limit = 4) {

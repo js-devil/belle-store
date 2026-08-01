@@ -27,13 +27,16 @@
         >
       </div>
       <div class="product-buttons">
-        <a
-          href="javascript:void(0)"
-          class="btn view-3d-trigger"
-          title="View 3D"
-          @click="show3dViewer = true"
-          ><i class="icon anm anm-play-r" aria-hidden="true"></i
-        ></a>
+        <span v-if="product.model3d" class="tooltip-wrap">
+          <a
+            href="javascript:void(0)"
+            class="btn view-3d-trigger"
+            title="View 3D"
+            @click="open3dViewer"
+            ><i class="icon anm anm-play-r" aria-hidden="true"></i
+          ></a>
+          <span class="tooltip-bubble">Click to view product in 3D</span>
+        </span>
         <a
           href="javascript:void(0)"
           class="btn prlightbox"
@@ -53,9 +56,10 @@
     />
     <ProductViewer3D
       v-if="show3dViewer"
-      :model-data="product.model3d"
+      :model-src="product.model3d"
       :poster-image="product.images.primary"
       :product-title="product.title"
+      :product-slug="product.slug"
       @close="show3dViewer = false"
     />
   </div>
@@ -75,4 +79,46 @@ const thumbnails = computed(() =>
 const activeIndex = ref(0);
 const showLightbox = ref(false);
 const show3dViewer = ref(false);
+
+function open3dViewer() {
+  show3dViewer.value = true;
+}
 </script>
+
+<style scoped>
+.tooltip-wrap {
+  position: relative;
+  display: inline-block;
+}
+.tooltip-bubble {
+  position: absolute;
+  bottom: 100%;
+  right: 0;
+  margin-bottom: 8px;
+  padding: 6px 10px;
+  background: #111;
+  color: #fff;
+  font-size: 12px;
+  line-height: 1.3;
+  white-space: nowrap;
+  border-radius: 3px;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.15s ease-in-out;
+  pointer-events: none;
+  z-index: 10;
+}
+.tooltip-bubble::after {
+  content: "";
+  position: absolute;
+  top: 100%;
+  right: 12px;
+  border: 5px solid transparent;
+  border-top-color: #111;
+}
+.tooltip-wrap:hover .tooltip-bubble,
+.tooltip-wrap:focus-within .tooltip-bubble {
+  opacity: 1;
+  visibility: visible;
+}
+</style>

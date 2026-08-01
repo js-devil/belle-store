@@ -76,6 +76,7 @@ const route = useRoute();
 const { addToCart } = useCart();
 const { has, toggle: toggleWishlist } = useWishlist();
 const { markViewed, slugs: recentlyViewedSlugs } = useRecentlyViewed();
+const { logEvent } = useAnalytics();
 
 const product = computed(() => getProductBySlug(route.params.slug));
 
@@ -96,12 +97,25 @@ const tabsRef = ref(null);
 
 useHead({ title: `${product.value.title} | Belle Store` });
 
+const viewStartedAt = Date.now();
+
+function logTimeOnPage() {
+  const seconds = Math.round((Date.now() - viewStartedAt) / 1000);
+  logEvent("time_on_page", { slug: product.value.slug, seconds });
+}
+
 onMounted(() => {
   markViewed(product.value.slug);
+  window.addEventListener("beforeunload", logTimeOnPage);
+});
+onBeforeUnmount(() => {
+  logTimeOnPage();
+  window.removeEventListener("beforeunload", logTimeOnPage);
 });
 
 function handleAddToCart({ qty, size, color }) {
   addToCart(product.value, { qty, size, color });
+  logEvent("add_to_cart", { slug: product.value.slug, qty });
 }
 
 function handleWishlist() {

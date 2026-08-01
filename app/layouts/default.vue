@@ -2,7 +2,18 @@
   <main class="belle" :class="pageBodyClass">
     <Preloader />
 
-    <slot />
+    <div class="pageWrapper">
+      <MainNav />
+
+      <slot />
+
+      <!--Footer-->
+      <NavFooter />
+
+      <!--Scroll Top-->
+      <span id="site-scroll"><i class="icon anm anm-angle-up-r"></i></span>
+      <!--End Scroll Top-->
+    </div>
   </main>
 </template>
 

@@ -1,2 +1,2 @@
 User-Agent: *
-Disallow:
+Disallow: /insights-7f3k2q9

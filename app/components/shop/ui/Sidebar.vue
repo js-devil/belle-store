@@ -32,7 +32,7 @@ const route = useRoute();
 // selected, so we never show filters (e.g. shoe sizes) that don't apply to
 // the products actually on screen.
 const scopedProducts = computed(() =>
-  getProductsByCategory(route.query.category)
+  getProductsByCategory(route.query.category, route.query.subcategory)
 );
 
 const sizes = computed(() => [

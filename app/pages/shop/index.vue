@@ -41,21 +41,30 @@ const activeCategory = computed(() =>
     : null
 );
 
-const bannerTitle = computed(() => activeCategory.value?.label ?? "Shop All Products");
+const subcategoryLabel = {
+  male: "Men's",
+  female: "Women's",
+  sneakers: "Sneakers",
+}[route.query.subcategory];
+
+const bannerTitle = computed(() => {
+  if (subcategoryLabel) return `${subcategoryLabel} Shoes`;
+  return activeCategory.value?.label ?? "Shop All Products";
+});
 const bannerImage = computed(
   () => activeCategory.value?.tileImage ?? "/images/collection/collection-page1.jpg"
 );
 
-// reset pagination whenever the category filter changes
+// reset pagination whenever the category/subcategory filter changes
 watch(
-  () => route.query.category,
+  () => [route.query.category, route.query.subcategory],
   () => {
     page.value = 1;
   }
 );
 
 const filteredProducts = computed(() =>
-  getProductsByCategory(route.query.category)
+  getProductsByCategory(route.query.category, route.query.subcategory)
 );
 
 const sortedProducts = computed(() => {
