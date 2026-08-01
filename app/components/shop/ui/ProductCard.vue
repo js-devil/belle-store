@@ -45,6 +45,15 @@
         </button>
       </form>
       <div class="button-set">
+        <a
+          v-if="product.model3d"
+          href="javascript:void(0)"
+          title="View in 3D"
+          class="view-3d-trigger"
+          @click.prevent="show3dViewer = true"
+        >
+          <i class="icon anm anm-play-r" aria-hidden="true"></i>
+        </a>
         <NuxtLink :to="`/product/${product.slug}`" title="View Product" class="quick-view">
           <i class="icon anm anm-search-plus-r"></i>
         </NuxtLink>
@@ -92,6 +101,16 @@
         </li>
       </ul>
     </div>
+
+    <ProductViewer3D
+      v-if="show3dViewer"
+      :model-src="product.model3d"
+      :poster-image="product.images.primary"
+      :product-title="product.title"
+      :product-slug="product.slug"
+      :colors="product.colors"
+      @close="show3dViewer = false"
+    />
   </div>
 </template>
 
@@ -108,6 +127,7 @@ const hasVariants = computed(
   () => !!(props.product.sizes?.length || props.product.colors?.length)
 );
 const inWishlist = computed(() => has(props.product.slug));
+const show3dViewer = ref(false);
 
 function handleAddToCart() {
   if (hasVariants.value) {
@@ -121,5 +141,25 @@ function handleAddToCart() {
 <style scoped>
 .wishlist-heart--filled {
   color: #e0245e;
+}
+/* Matches the generic a.quick-view/a.wishlist box treatment in style.css -
+   that rule is a plain class selector (not scoped to any parent context),
+   but it doesn't know about this new button's class name. */
+.view-3d-trigger {
+  color: #000;
+  background-color: #fff;
+  border: 0;
+  width: 35px;
+  height: 35px;
+  line-height: 34px;
+  display: block;
+  text-align: center;
+  padding: 0;
+  margin-bottom: 5px;
+}
+.view-3d-trigger:hover {
+  color: #fff;
+  background-color: #000;
+  opacity: 0.8;
 }
 </style>
