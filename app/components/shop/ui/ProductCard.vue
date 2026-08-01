@@ -56,7 +56,7 @@
             :class="{ 'is-active': inWishlist }"
             @click.prevent="$emit('add-wishlist', product)"
           >
-            <i class="icon anm anm-heart-l"></i>
+            <i :class="inWishlist ? 'fa fa-heart wishlist-heart--filled' : 'icon anm anm-heart-l'"></i>
           </a>
         </div>
       </div>
@@ -117,3 +117,9 @@ function handleAddToCart() {
   emit("add-to-cart", props.product);
 }
 </script>
+
+<style scoped>
+.wishlist-heart--filled {
+  color: #e0245e;
+}
+</style>

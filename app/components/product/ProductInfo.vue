@@ -100,7 +100,7 @@
           href="#"
           :class="{ 'is-active': inWishlist }"
           @click.prevent="$emit('add-wishlist')"
-          ><i class="icon anm anm-heart-l"></i>
+          ><i :class="inWishlist ? 'fa fa-heart wishlist-heart--filled' : 'icon anm anm-heart-l'"></i>
           <span>{{ inWishlist ? "In Wishlist" : "Add to Wishlist" }}</span></a
         >
       </div>
@@ -144,3 +144,9 @@ function handleAddToCart() {
   });
 }
 </script>
+
+<style scoped>
+.wishlist-heart--filled {
+  color: #e0245e;
+}
+</style>
