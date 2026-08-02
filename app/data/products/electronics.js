@@ -285,7 +285,7 @@ export const electronics = [
     images: { primary: image("logitech_audio_speaker"), hover: image("logitech_audio_speaker"), gallery: [image("logitech_audio_speaker")] },
     // No matching .glb was provided for this product yet - the 3D viewer button
     // simply won't render until one is added, per the plug-and-play convention.
-    model3d: null,
+    model3d: model("logitech_audio_speaker"),
     reviews: [{ author: "Ope T.", rating: 4, title: "Great desktop upgrade", body: "Much better sound than my laptop speakers for the price.", date: "2026-02-19" }],
   },
   {

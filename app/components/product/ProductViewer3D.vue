@@ -29,7 +29,7 @@
             :alt="productTitle"
             camera-controls
             touch-action="none"
-            shadow-intensity="1"
+            shadow-intensity="0.5"
             exposure="1"
             class="viewer3d-model"
             @progress="handleProgress"
@@ -66,7 +66,7 @@
                 @click="selectColor(color)"
               ></button>
             </div>
-            <p class="viewer3d-colors__selected">{{ selectedColorName }}</p>
+            <p class="viewer3d-colors__selected">{{ selectedColorName ?? "Default" }}</p>
           </div>
 
           <div v-if="hasError" class="viewer3d-placeholder">
@@ -97,6 +97,17 @@ const props = defineProps({
   productTitle: { type: String, required: true },
   productSlug: { type: String, default: null },
   colors: { type: Array, default: null },
+  // Some models (e.g. a rosary) have more than one real, distinct material -
+  // recoloring ALL of them to the same swatch would erase that variety (blue
+  // beads turning the same silver as the cross). When given, only materials
+  // whose name is in this list get retinted; other materials are left alone.
+  colorTargetMaterials: { type: Array, default: null },
+  // One-time curated fixups for models with several distinct materials that
+  // are each individually bland (e.g. a table's "wood"/"marble_top"/
+  // "table_stand"/"chair_underneath") - applied unconditionally on load,
+  // independent of the interactive colour-swatch feature below. Keyed by
+  // material name: { hex, metallic?, roughness? }.
+  materialColors: { type: Object, default: null },
 });
 const emit = defineEmits(["close"]);
 
@@ -108,7 +119,9 @@ const isFullscreen = ref(false);
 const isLoaded = ref(false);
 const loadPercent = ref(0);
 const hasError = ref(false);
-const selectedColorName = ref(props.colors?.[0]?.name ?? null);
+// Starts unset (not colors[0]) since no tint is applied until the user
+// explicitly picks a swatch - see handleLoad().
+const selectedColorName = ref(null);
 
 function handleProgress(event) {
   loadPercent.value = Math.round((event.detail?.totalProgress ?? 0) * 100);
@@ -123,24 +136,78 @@ function hexToRgb01(hex) {
 }
 
 // None of these GLBs ship KHR_materials_variants, so "choosing a colour"
-// isn't a matter of switching a baked-in variant - it's a live retint of
-// every material's base colour via model-viewer's material API instead.
-function applyColor(hex) {
+// isn't a matter of switching a baked-in variant - it's a live retint via
+// model-viewer's material API instead. Metals need metallicFactor/
+// roughnessFactor set too, not just the colour - a lot of these assets ship
+// with metallicFactor: 0 by default, which renders as flat coloured plastic
+// no matter what base colour is applied, not real-looking silver/gold.
+function applyMaterialColor(material, color) {
+  const pbr = material.pbrMetallicRoughness;
+  if (!pbr) return;
+  pbr.setBaseColorFactor(hexToRgb01(color.hex));
+  if (color.metallic != null) pbr.setMetallicFactor(color.metallic);
+  if (color.roughness != null) pbr.setRoughnessFactor(color.roughness);
+}
+
+function applyColor(color) {
   const materials = viewerEl.value?.model?.materials;
   if (!materials?.length) return;
-  const rgba = hexToRgb01(hex);
-  materials.forEach((material) => material.pbrMetallicRoughness?.setBaseColorFactor(rgba));
+  const targets = props.colorTargetMaterials?.length
+    ? materials.filter((material) => props.colorTargetMaterials.includes(material.name))
+    : materials;
+  targets.forEach((material) => applyMaterialColor(material, color));
 }
 
 function selectColor(color) {
   selectedColorName.value = color.name;
-  applyColor(color.hex);
+  applyColor(color);
 }
 
 function handleLoad() {
   isLoaded.value = true;
-  if (props.colors?.length) {
-    applyColor(props.colors[0].hex);
+  const materials = viewerEl.value?.model?.materials ?? [];
+
+  // Curated per-material fixups (a table's wood vs. marble vs. metal stand,
+  // each needing a different default) always apply, regardless of the
+  // interactive swatch feature below.
+  if (props.materialColors) {
+    materials.forEach((material) => {
+      const override = props.materialColors[material.name];
+      if (override) applyMaterialColor(material, override);
+    });
+  }
+
+  // A handful of these exports default every material to metallicFactor: 1
+  // with no actual metallicRoughnessTexture (i.e. nobody deliberately
+  // authored it as metal) - on a material that DOES have a real baked photo
+  // texture, that stray full-metal default makes the surface reflect the
+  // scene's lighting/environment instead of showing its own texture colours
+  // (a sneaker's real colourway reads as a wrong tint, a sofa's fabric/
+  // leather reads as near-black). Softening it lets the texture's own
+  // colours read correctly without touching what the texture actually shows.
+  materials.forEach((material) => {
+    const pbr = material.pbrMetallicRoughness;
+    if (!pbr) return;
+    if (pbr.baseColorTexture && !pbr.metallicRoughnessTexture && pbr.metallicFactor >= 0.95) {
+      pbr.setMetallicFactor(0.05);
+      if (pbr.roughnessFactor >= 0.95) pbr.setRoughnessFactor(0.6);
+    }
+  });
+
+  // Auto-applying colors[0] unconditionally used to flatten every material
+  // to one flat hex the instant the model loaded - fine for a model that
+  // ships with a bland, textureless white/grey default, but it also
+  // overwrote real baked photo textures with a flat tint, and wiped out any
+  // real per-material variety (a rosary's blue beads). colorTargetMaterials
+  // scopes a tint to specific named materials deliberately (e.g. a café
+  // table's wood but not its marble top), so that's always safe to
+  // auto-apply as the curated default; with no scoping, only auto-tint when
+  // nothing on the model has a real texture to lose.
+  const hasAnyTexture = materials.some((material) => material.pbrMetallicRoughness?.baseColorTexture);
+  const shouldAutoTint = props.colorTargetMaterials?.length ? true : !hasAnyTexture;
+  if (props.colors?.length && shouldAutoTint) {
+    selectedColorName.value = props.colors[0].name;
+    applyColor(props.colors[0]);
   }
 }
 
@@ -200,7 +267,23 @@ function handleClose() {
   emit("close");
 }
 
+// On mobile, leaving the page scrollable behind a fixed-position overlay lets
+// the browser's address bar show/hide as the user drags on the model, which
+// resizes the visual viewport mid-gesture - the panel (sized off vh/vw at the
+// old viewport size) ends up taller than the new visible area, pushing the
+// toolbar buttons out of view ("screen is stretched, can't see close
+// button"). Locking body scroll while the viewer is open keeps the browser
+// chrome - and the viewport size - stable for the whole interaction.
+let scrollYBeforeOpen = 0;
+onMounted(() => {
+  scrollYBeforeOpen = window.scrollY;
+  document.body.style.top = `-${scrollYBeforeOpen}px`;
+  document.body.classList.add("viewer3d-lock-scroll");
+});
 onBeforeUnmount(() => {
+  document.body.classList.remove("viewer3d-lock-scroll");
+  document.body.style.top = "";
+  window.scrollTo(0, scrollYBeforeOpen);
   clearTimeout(gestureTimer);
 });
 </script>
@@ -232,6 +315,12 @@ onBeforeUnmount(() => {
 .viewer3d-panel.is-fullscreen {
   width: 100vw;
   height: 100vh;
+  /* dvh/dvw track the actual visible viewport on mobile (vh/vw can be based
+     on the viewport size with the browser chrome hidden, taller than what's
+     actually visible while the chrome is showing) - kept as a fallback for
+     browsers without dvh support. */
+  width: 100dvw;
+  height: 100dvh;
   max-width: none;
   max-height: none;
   border-radius: 0;
@@ -358,5 +447,14 @@ onBeforeUnmount(() => {
 }
 .viewer3d-message {
   color: #ccc;
+}
+</style>
+
+<style>
+/* Global (unscoped): applied to <body>, which this component doesn't render. */
+body.viewer3d-lock-scroll {
+  overflow: hidden;
+  position: fixed;
+  width: 100%;
 }
 </style>

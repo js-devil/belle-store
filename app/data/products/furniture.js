@@ -83,7 +83,19 @@ export const furniture = [
     shippingReturns: SHIPPING_RETURNS,
     sizeChart: null,
     sizes: null,
-    colors: null,
+    // This export ships 4 real distinct materials (wood/marble/metal parts,
+    // each with its own real photo texture recovered from a legacy material
+    // format model-viewer couldn't render - see ProductViewer3D). A wood
+    // stain tint is scoped to the wood/metal parts only via
+    // colorTargetMaterials, deliberately excluding marble_top so the table
+    // top stays its real (white/cream) marble regardless of which finish is
+    // selected. "Coffee" is a deliberate default look, not a fallback for a
+    // blank material - see the auto-tint rule in ProductViewer3D.
+    colorTargetMaterials: ["wood", "chair_underneath", "table_stand"],
+    colors: [
+      { name: "Coffee", hex: "#6b4423", metallic: 0.05, roughness: 0.55 },
+      { name: "Natural Oak", hex: "#c9a877", metallic: 0.05, roughness: 0.55 },
+    ],
     images: { primary: image("coffeeshop_furniture_set"), hover: image("coffeeshop_furniture_set"), gallery: [image("coffeeshop_furniture_set")] },
     model3d: model("coffeeshop_furniture_set"),
     reviews: [{ author: "Dare O.", rating: 4, title: "Perfect for our balcony", body: "Sturdy enough to leave outside under a covered patio.", date: "2026-01-25" }],
@@ -240,6 +252,19 @@ export const furniture = [
     sizeChart: null,
     sizes: null,
     colors: null,
+    // Fabric/Leather each carry their own real metallicRoughnessTexture, so
+    // ProductViewer3D's general "no metallicRoughnessTexture -> soften"
+    // pass deliberately leaves them alone - but that per-pixel data reads as
+    // fully metallic across most of the surface, rendering as a near-black
+    // sheet regardless. Forcing the factor down here overrides that reading
+    // outright; hex #ffffff is a neutral multiplier so the real base colour
+    // texture underneath isn't recoloured, only its metal/rough response.
+    // "Base" (frame/legs) has no texture at all and needs its own default.
+    materialColors: {
+      Fabric: { hex: "#ffffff", metallic: 0.05, roughness: 0.7 },
+      Leather: { hex: "#ffffff", metallic: 0.05, roughness: 0.55 },
+      Base: { hex: "#2e2018", metallic: 0.1, roughness: 0.55 },
+    },
     images: { primary: image("living_room_sofa__furniture"), hover: image("living_room_sofa__furniture"), gallery: [image("living_room_sofa__furniture")] },
     model3d: model("living_room_sofa__furniture"),
     reviews: [{ author: "Victor I.", rating: 5, title: "Sink-in comfortable", body: "Cushions haven't sagged after months of daily use.", date: "2026-03-09" }],

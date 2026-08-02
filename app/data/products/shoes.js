@@ -308,7 +308,16 @@ export const shoes = [
     shippingReturns: SHIPPING_RETURNS,
     sizeChart: SHOE_SIZE_CHART,
     sizes: ["UK8", "UK9", "UK10", "UK11"],
-    colors: null,
+    // The model now has its own real leather photo texture (recovered from a
+    // legacy material format model-viewer couldn't render - see
+    // ProductViewer3D), so these are optional tints layered on top of that
+    // real texture rather than a forced default. "Black" is a brown-black
+    // espresso mix rather than a flat true black, closer to real dark
+    // leather than a flat colour swap would look.
+    colors: [
+      { name: "Brown", hex: "#6b4226", metallic: 0.05, roughness: 0.45 },
+      { name: "Black", hex: "#2b2018", metallic: 0.05, roughness: 0.4 },
+    ],
     images: {
       primary: image("male shoes", "old_oxford_shoe"),
       hover: image("male shoes", "old_oxford_shoe"),
@@ -583,7 +592,20 @@ export const shoes = [
     shippingReturns: SHIPPING_RETURNS,
     sizeChart: SHOE_SIZE_CHART,
     sizes: ["UK6", "UK7", "UK8", "UK9", "UK10"],
-    colors: null,
+    // The model now has its own real photo texture (recovered from a legacy
+    // material format model-viewer couldn't render - see ProductViewer3D),
+    // so the shoe already shows its real colourway by default. This is a
+    // single material for the entire shoe though - there's no separate
+    // "laces" material to isolate, so a colourway option can only tint the
+    // whole shoe rather than repaint just the upper. A moderate (not fully
+    // saturated) tint keeps that reasonable: multiplying a light colour over
+    // the texture shifts the mid-tone upper toward blue/green while lighter
+    // areas like the laces stay closer to white, since multiplying a light
+    // tint barely darkens already-light pixels.
+    colors: [
+      { name: "Steel Blue", hex: "#a9c2db", metallic: 0.05, roughness: 0.6 },
+      { name: "Forest Green", hex: "#a9d0b3", metallic: 0.05, roughness: 0.6 },
+    ],
     images: {
       primary: image("sneakers", "new_balance_574"),
       hover: image("sneakers", "new_balance_574"),

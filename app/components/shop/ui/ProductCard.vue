@@ -109,6 +109,8 @@
       :product-title="product.title"
       :product-slug="product.slug"
       :colors="product.colors"
+      :color-target-materials="product.colorTargetMaterials"
+      :material-colors="product.materialColors"
       @close="show3dViewer = false"
     />
   </div>

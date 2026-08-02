@@ -3,13 +3,14 @@
   <div id="page-content">
     <CollectionBanner :image="bannerImage" :title="bannerTitle" />
 
-    <div class="container">
+    <div ref="contentEl" class="container">
       <div class="row">
         <Sidebar />
         <MainContent
           :products="displayedProducts"
           :view="view"
           :sort-by="sortBy"
+          :has-more="displayedProducts.length < sortedProducts.length"
           @toggle-filter="toggleFilter"
           @update:view="view = $event"
           @update:sort="sortBy = $event"
@@ -67,6 +68,22 @@ watch(
     page.value = 1;
   }
 );
+
+// Clicking a category in the nav lands on this page scrolled to the top
+// (the hero banner), leaving the actual product grid a scroll away - jump
+// straight to the grid whenever a category is present, both on first
+// arrival (nav link navigates here fresh) and when switching categories
+// without leaving the page (e.g. the sidebar's own category links).
+const contentEl = ref(null);
+function scrollToContent() {
+  contentEl.value?.scrollIntoView({ behavior: "smooth", block: "start" });
+}
+onMounted(() => {
+  if (route.query.category) scrollToContent();
+});
+watch(() => route.query.category, (category, previous) => {
+  if (category && category !== previous) scrollToContent();
+});
 
 const filteredProducts = computed(() => {
   const byCategory = getProductsByCategory(route.query.category, route.query.subcategory);

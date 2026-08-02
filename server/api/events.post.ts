@@ -1,4 +1,9 @@
 import { getStore } from "@netlify/blobs";
+const store = getStore({
+  name: "interaction-events",
+  siteID: process.env.NETLIFY_SITE_ID,
+  token: process.env.NETLIFY_AUTH_TOKEN,
+})
 
 // A short random suffix for the blob key - doesn't need to be
 // cryptographically random, just unique enough to avoid same-millisecond
@@ -38,7 +43,7 @@ export default defineEventHandler(async (event) => {
   // filesystem between invocations, and a single-blob read-modify-write
   // would lose events under concurrent traffic. The analytics/summary
   // endpoint lists and aggregates every blob in this store.
-  const store = getStore("interaction-events");
+
   const key = `${record.timestamp}-${randomSuffix()}`;
   await store.setJSON(key, record);
 

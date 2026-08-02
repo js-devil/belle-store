@@ -121,10 +121,17 @@ export const toys = [
     details: ["Lightweight moulded design", "Textured grip handle", "Recommended ages 5+"],
     shippingReturns: SHIPPING_RETURNS,
     sizeChart: null, sizes: null,
+    // The model now has its own real carved-stone photo texture (recovered
+    // from a legacy material format model-viewer couldn't render at all -
+    // see ProductViewer3D), so it's no longer tinted by default - these are
+    // optional finish variants, tinting on top of that real texture rather
+    // than replacing it. The model is one single material for the whole
+    // piece, so "colour" means an overall finish, not a part-by-part
+    // repaint - darker shades read as a heavier, harder finish.
     colors: [
-      { name: "Bronze", hex: "#a3742f" },
-      { name: "Blue", hex: "#1d5fd1" },
-      { name: "Red", hex: "#d62828" },
+      { name: "Stone Grey", hex: "#5c584f", metallic: 0.05, roughness: 0.9 },
+      { name: "Ancient Bronze", hex: "#4a3a22", metallic: 0.3, roughness: 0.75 },
+      { name: "Dark Iron", hex: "#22222a", metallic: 0.6, roughness: 0.55 },
     ],
     images: { primary: image("norse-hammer"), hover: image("norse-hammer"), gallery: [image("norse-hammer")] },
     model3d: model("norse-hammer"),
@@ -221,7 +228,11 @@ export const toys = [
     description: "<p>A muscular action figure ready for imaginative strongman and superhero storylines, with a sturdy stand-alone base.</p>",
     details: ["Stands unaided", "Detailed sculpted design", "Recommended ages 5+"],
     shippingReturns: SHIPPING_RETURNS,
-    sizeChart: null, sizes: null, colors: null,
+    sizeChart: null, sizes: null,
+    colors: [
+      { name: "Bronze", hex: "#6e5230", metallic: 0.15, roughness: 0.6 },
+      { name: "Onyx", hex: "#1a1a1a", metallic: 0.1, roughness: 0.5 },
+    ],
     images: { primary: image("strongman_figure"), hover: image("strongman_figure"), gallery: [image("strongman_figure")] },
     model3d: model("strongman_figure"),
     reviews: [{ author: "Bola K.", rating: 4, title: "Great detail", body: "Impressed by the sculpting for a toy at this price.", date: "2026-01-17" }],

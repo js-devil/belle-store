@@ -35,10 +35,17 @@ export const jewelry = [
     shippingReturns: SHIPPING_RETURNS,
     sizeChart: null,
     sizes: null,
+    // The bare GLB ships with a flat, textureless metallicFactor: 0 default -
+    // no amount of base colour alone makes that look like real metal, so
+    // each option also sets metallic/roughness for an actual polished-metal
+    // finish (see ProductViewer3D's applyColor).
     colors: [
-      { name: "Silver", hex: "#c9c9c9" },
-      { name: "Gold", hex: "#d4af37" },
-      { name: "Rose Gold", hex: "#b76e79" },
+      // A flat neutral grey reads as dull plastic, not metal - a cooler,
+      // slightly blue-tinted white with a low roughness gives it a sharper,
+      // brighter specular "life" much closer to real polished silver.
+      { name: "Silver", hex: "#dbe2e6", metallic: 1, roughness: 0.12 },
+      { name: "Gold", hex: "#e8c14d", metallic: 1, roughness: 0.2 },
+      { name: "Rose Gold", hex: "#e0a693", metallic: 1, roughness: 0.2 },
     ],
     images: {
       primary: image("avalon_mcqueeny_ring"),
@@ -127,9 +134,9 @@ export const jewelry = [
     sizeChart: null,
     sizes: null,
     colors: [
-      { name: "Platinum", hex: "#d9d9d9" },
-      { name: "Yellow Gold", hex: "#d4af37" },
-      { name: "Rose Gold", hex: "#b76e79" },
+      { name: "Platinum", hex: "#dfe4e7", metallic: 1, roughness: 0.12 },
+      { name: "Yellow Gold", hex: "#e8c14d", metallic: 1, roughness: 0.2 },
+      { name: "Rose Gold", hex: "#e0a693", metallic: 1, roughness: 0.2 },
     ],
     images: {
       primary: image("chapel_hills_cline_bridal_set"),
@@ -336,12 +343,16 @@ export const jewelry = [
     shippingReturns: SHIPPING_RETURNS,
     sizeChart: null,
     sizes: null,
-    colors: null,
-    // colors: [
-    //   { name: "Pearl White", hex: "#f5f0e6" },
-    //   { name: "Amethyst", hex: "#6c4a8e" },
-    //   { name: "Ruby Red", hex: "#8b2635" },
-    // ],
+    // The crucifix/chain ("Material") and beads ("blue") are two genuinely
+    // separate materials on this model, unlike most of the catalog's single-
+    // material jewelry - colorTargetMaterials keeps a colour choice scoped to
+    // the metal only, so the beads stay their real blue instead of also
+    // getting flattened to whichever metal tone is picked.
+    colorTargetMaterials: ["Material"],
+    colors: [
+      { name: "Silver", hex: "#d7d9db", metallic: 1, roughness: 0.22 },
+      { name: "Gold", hex: "#e8c14d", metallic: 1, roughness: 0.22 },
+    ],
     images: {
       primary: image("juliet_rosary"),
       hover: image("juliet_rosary"),

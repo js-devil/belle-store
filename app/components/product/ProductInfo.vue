@@ -137,6 +137,11 @@ function handleAddToCart() {
 /* The legacy .swatches li styling only targets the shop grid card context
    (.grid-products .item .swatches li), so on the PDP these render unsized -
    give the swatch circle (image or plain hex colour) explicit dimensions. */
+.swatches {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
 .swatches .swatch {
   width: 28px;
   height: 28px;
@@ -148,8 +153,24 @@ function handleAddToCart() {
 .swatches .swatch.rounded {
   border-radius: 50%;
 }
+/* Size swatches ("UK9", "M", "42"...) are text, not a fixed-size colour
+   circle - let them size to their label with breathing room, and use a
+   rounded pill border that hugs the text instead of the plain square
+   default (2px solid, corner-to-corner) border-color swap used elsewhere. */
+.swatches .swatch.medium:not(.rounded) {
+  width: auto;
+  height: auto;
+  min-width: 40px;
+  padding: 6px 12px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 6px;
+  border-color: #ddd;
+}
 .swatches .swatch.active {
   border-color: #111;
+  font-weight: 600;
 }
 .swatches .swatch img,
 .swatches .swatch .swatch-color {

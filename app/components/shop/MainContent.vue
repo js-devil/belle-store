@@ -20,7 +20,7 @@
         @add-to-cart="$emit('add-to-cart', $event)"
         @add-wishlist="$emit('add-wishlist', $event)"
       />
-      <LoadMoreButton @load-more="$emit('load-more')" />
+      <LoadMoreButton :has-more="hasMore" @load-more="$emit('load-more')" />
     </div>
   </div>
 </template>
@@ -34,6 +34,7 @@ defineProps({
   products: { type: Array, required: true },
   view: { type: String, default: "grid" },
   sortBy: { type: String, default: "manual" },
+  hasMore: { type: Boolean, default: true },
 });
 defineEmits([
   "toggle-filter",
