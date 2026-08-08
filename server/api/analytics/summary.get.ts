@@ -1,4 +1,5 @@
 import { getStore } from "@netlify/blobs";
+import { applyEventToAggregate, EMPTY_AGGREGATE, withDefaults, type Aggregate } from "../../utils/analyticsAggregate";
 
 function topEntries(counts: Record<string, number>, limit = 10) {
   return Object.entries(counts)
@@ -7,99 +8,160 @@ function topEntries(counts: Record<string, number>, limit = 10) {
     .map(([key, count]) => ({ key, count }));
 }
 
-export default defineEventHandler(async () => {
-  const store = getStore("interaction-events");
-
-  // Paginate through every blob in the store (a single list() call caps out
-  // at a page size well below what a full study's worth of events could
-  // reach), then read each one back as JSON.
+// Backfill path only: rebuilds the aggregate from raw event blobs, for
+// events logged before the aggregate blob existed. Kept to a modest batch
+// size (not hundreds-at-once, which reliably times out) since this only
+// ever runs once per store, not on every request.
+async function backfillAggregate(
+  eventsStore: ReturnType<typeof getStore>,
+  batchSize = 20
+): Promise<Aggregate> {
   const keys: string[] = [];
-  for await (const page of store.list({ paginate: true })) {
+  for await (const page of eventsStore.list({ paginate: true })) {
     for (const blob of page.blobs) keys.push(blob.key);
   }
-  const events = (await Promise.all(keys.map((key) => store.get(key, { type: "json" })))).filter(
-    Boolean
-  );
 
-  const sessions = new Set();
-  const pageViewsByPath = {};
-  const productViewsBySlug = {};
-  const addToCartBySlug = {};
-  const rotateBySlug = {};
-  const zoomBySlug = {};
-  const timeOnPageBySlug = {};
-  const eventsByDay = {};
-
-  let totalPageViews = 0;
-  let totalRotate = 0;
-  let totalZoom = 0;
-  let totalAddToCart = 0;
-
-  for (const event of events) {
-    sessions.add(event.sessionId);
-
-    const day = (event.timestamp || "").slice(0, 10);
-    if (day) eventsByDay[day] = (eventsByDay[day] || 0) + 1;
-
-    const slug = event.payload?.slug;
-
-    switch (event.type) {
-      case "page_view":
-        totalPageViews++;
-        if (event.payload?.path) {
-          pageViewsByPath[event.payload.path] = (pageViewsByPath[event.payload.path] || 0) + 1;
-        }
-        if (slug) productViewsBySlug[slug] = (productViewsBySlug[slug] || 0) + 1;
-        break;
-      case "add_to_cart":
-        totalAddToCart++;
-        if (slug) addToCartBySlug[slug] = (addToCartBySlug[slug] || 0) + 1;
-        break;
-      case "rotate_gesture":
-        totalRotate++;
-        if (slug) rotateBySlug[slug] = (rotateBySlug[slug] || 0) + 1;
-        break;
-      case "zoom_event":
-        totalZoom++;
-        if (slug) zoomBySlug[slug] = (zoomBySlug[slug] || 0) + 1;
-        break;
-      case "time_on_page":
-        if (slug && typeof event.payload?.seconds === "number") {
-          if (!timeOnPageBySlug[slug]) timeOnPageBySlug[slug] = { total: 0, count: 0 };
-          timeOnPageBySlug[slug].total += event.payload.seconds;
-          timeOnPageBySlug[slug].count += 1;
-        }
-        break;
+  let aggregate = EMPTY_AGGREGATE();
+  for (let i = 0; i < keys.length; i += batchSize) {
+    const batch = keys.slice(i, i + batchSize);
+    const records = await Promise.all(batch.map((key) => eventsStore.get(key, { type: "json" })));
+    for (const record of records) {
+      if (record) aggregate = applyEventToAggregate(aggregate, record);
     }
   }
+  return aggregate;
+}
 
-  const viewer3dBySlug = {};
-  for (const slug of new Set([...Object.keys(rotateBySlug), ...Object.keys(zoomBySlug)])) {
-    viewer3dBySlug[slug] = (rotateBySlug[slug] || 0) + (zoomBySlug[slug] || 0);
+const ratio = (numerator: number, denominator: number) =>
+  denominator > 0 ? Math.round((numerator / denominator) * 1000) / 10 : null;
+
+export default defineEventHandler(async () => {
+  // Mirrors events.post.ts: outside Netlify's own runtime (i.e. plain
+  // `npm run dev`, not `netlify dev`), getStore has no ambient context to
+  // read credentials from, and the bare `getStore("name")` shorthand throws.
+  // Passing siteID/token explicitly makes it work locally too, as long as
+  // NETLIFY_SITE_ID and NETLIFY_AUTH_TOKEN are set in .env.
+  const aggregateStore = getStore({
+    name: "analytics-aggregate",
+    siteID: process.env.NETLIFY_SITE_ID,
+    token: process.env.NETLIFY_AUTH_TOKEN,
+  });
+
+  let aggregate = await aggregateStore.get("summary", { type: "json" });
+  if (!aggregate) {
+    const eventsStore = getStore({
+      name: "interaction-events",
+      siteID: process.env.NETLIFY_SITE_ID,
+      token: process.env.NETLIFY_AUTH_TOKEN,
+    });
+    aggregate = await backfillAggregate(eventsStore);
+    await aggregateStore.setJSON("summary", aggregate);
+  } else {
+    aggregate = withDefaults(aggregate);
   }
 
-  const avgTimeOnPageBySlug = Object.fromEntries(
-    Object.entries(timeOnPageBySlug).map(([slug, { total, count }]) => [
-      slug,
-      Math.round(total / count),
-    ])
-  );
+  const a = aggregate as Aggregate;
+
+  const viewer3dBySlug: Record<string, number> = {};
+  for (const slug of new Set([...Object.keys(a.rotateBySlug), ...Object.keys(a.zoomBySlug)])) {
+    viewer3dBySlug[slug] = (a.rotateBySlug[slug] || 0) + (a.zoomBySlug[slug] || 0);
+  }
+
+  const totalVisits = Object.keys(a.sessionIds).length;
+  const used3dSessionKeys = Object.keys(a.sessionsUsed3d);
+  const purchasedSessionKeys = Object.keys(a.purchaseSessionIds);
+  const purchasedAndUsed3dCount = used3dSessionKeys.filter((id) => a.purchaseSessionIds[id]).length;
+  const purchasedWithout3dCount = purchasedSessionKeys.length - purchasedAndUsed3dCount;
+  const sessionsWithout3dCount = totalVisits - used3dSessionKeys.length;
 
   return {
-    totalEvents: events.length,
-    totalVisits: sessions.size,
-    totalPageViews,
-    totalAddToCart,
-    totalRotate,
-    totalZoom,
-    total3dInteractions: totalRotate + totalZoom,
-    topPages: topEntries(pageViewsByPath, 10),
-    topProductViews: topEntries(productViewsBySlug, 10),
-    topAddToCart: topEntries(addToCartBySlug, 10),
+    totalVisits,
+    totalProductVisits: a.totalProductVisits,
+    totalPurchases: a.totalPurchases,
+    totalRevenueUsd: Math.round(a.totalRevenueUsd * 100) / 100,
+
+    total3dInteractions: a.totalRotate + a.totalZoom,
+    totalRotate: a.totalRotate,
+    totalZoom: a.totalZoom,
+    total2dInteractions: a.totalImageZoom + a.totalThumbnailSwitch,
+    totalImageZoom: a.totalImageZoom,
+    totalThumbnailSwitch: a.totalThumbnailSwitch,
+
+    totalViewerErrors: a.totalViewerErrors,
+    viewerErrorRatePercent: ratio(a.totalViewerErrors, a.totalRotate + a.totalZoom + a.totalViewerErrors),
+    avgModelLoadTimeMs: a.loadTimeSampleCount
+      ? Math.round(a.totalLoadTimeMs / a.loadTimeSampleCount)
+      : null,
+    loadTimeSampleCount: a.loadTimeSampleCount,
+
+    // Session-level: did using the 3D viewer anywhere correlate with
+    // completing an actual purchase?
+    sessionsUsed3dCount: used3dSessionKeys.length,
+    sessionsWithout3dCount,
+    purchasedWithUsed3dCount: purchasedAndUsed3dCount,
+    purchasedWithoutUsed3dCount: purchasedWithout3dCount,
+    conversionRateOverallPercent: ratio(purchasedSessionKeys.length, totalVisits),
+    conversionRateWith3dPercent: ratio(purchasedAndUsed3dCount, used3dSessionKeys.length),
+    conversionRateWithout3dPercent: ratio(purchasedWithout3dCount, sessionsWithout3dCount),
+
+    // Per-visit: on a product that offers a 3D view, opening it vs. not -
+    // what happened next, on that SAME visit. This is the "does 3D
+    // interaction convince the user to act" comparison.
+    visitsWith3dCount: a.visitsWith3d,
+    visitsWithout3dCount: a.visitsWithout3d,
+    cartRateWith3dPercent: ratio(a.visitsWith3dAddedCart, a.visitsWith3d),
+    cartRateWithout3dPercent: ratio(a.visitsWithout3dAddedCart, a.visitsWithout3d),
+    wishlistRateWith3dPercent: ratio(a.visitsWith3dAddedWishlist, a.visitsWith3d),
+    wishlistRateWithout3dPercent: ratio(a.visitsWithout3dAddedWishlist, a.visitsWithout3d),
+    reviewsRateWith3dPercent: ratio(a.visitsWith3dCheckedReviews, a.visitsWith3d),
+    reviewsRateWithout3dPercent: ratio(a.visitsWithout3dCheckedReviews, a.visitsWithout3d),
+    sizeChartRateWith3dPercent: ratio(a.visitsWith3dCheckedSizeChart, a.visitsWith3d),
+    sizeChartRateWithout3dPercent: ratio(a.visitsWithout3dCheckedSizeChart, a.visitsWithout3d),
+
+    avgTimeOnPageWith3dSeconds: a.timeOnPageWith3d.count
+      ? Math.round(a.timeOnPageWith3d.total / a.timeOnPageWith3d.count)
+      : null,
+    avgTimeOnPageWithout3dSeconds: a.timeOnPageWithout3d.count
+      ? Math.round(a.timeOnPageWithout3d.total / a.timeOnPageWithout3d.count)
+      : null,
+
+    // Fair-comparison group: "without3d" above includes visits that did
+    // nothing at all (never zoomed a photo, never flipped a thumbnail) -
+    // that's not a fair opponent for "opened the 3D viewer", which is
+    // itself an active gesture. "active2d" restricts the 2D side to visits
+    // that also did something deliberate - zoomed in or browsed thumbnails
+    // - so both sides of the comparison are equally-engaged shoppers, just
+    // using a different inspection channel.
+    visitsActive2dCount: a.visitsActive2d,
+    cartRateActive2dPercent: ratio(a.visitsActive2dAddedCart, a.visitsActive2d),
+    wishlistRateActive2dPercent: ratio(a.visitsActive2dAddedWishlist, a.visitsActive2d),
+    reviewsRateActive2dPercent: ratio(a.visitsActive2dCheckedReviews, a.visitsActive2d),
+    sizeChartRateActive2dPercent: ratio(a.visitsActive2dCheckedSizeChart, a.visitsActive2d),
+    avgTimeOnPageActive2dSeconds: a.timeOnPageActive2d.count
+      ? Math.round(a.timeOnPageActive2d.total / a.timeOnPageActive2d.count)
+      : null,
+
+    // "Looking duration": how long the 3D viewer vs. the image lightbox
+    // actually stayed open - tracked identically on both sides, so unlike
+    // time-on-page (which also includes reading the description/price) this
+    // isolates time spent specifically inspecting the product visually.
+    avgViewer3dOpenSeconds: a.viewer3dOpenMsSampleCount
+      ? Math.round((a.totalViewer3dOpenMs / a.viewer3dOpenMsSampleCount / 100)) / 10
+      : null,
+    avgImageLightboxOpenSeconds: a.imageLightboxOpenMsSampleCount
+      ? Math.round((a.totalImageLightboxOpenMs / a.imageLightboxOpenMsSampleCount / 100)) / 10
+      : null,
+    viewer3dOpenSampleCount: a.viewer3dOpenMsSampleCount,
+    imageLightboxOpenSampleCount: a.imageLightboxOpenMsSampleCount,
+
+    topProductViews: topEntries(a.productViewsBySlug, 10),
     top3dProducts: topEntries(viewer3dBySlug, 10),
-    rotateBySlug,
-    zoomBySlug,
-    avgTimeOnPageBySlug,
-    eventsByDay,
+    topPurchasedProducts: topEntries(a.purchasesBySlug, 10),
+
+    // RQ5 (business benefit): which product categories draw the most
+    // traffic and the most 3D engagement, so a recommendation can point at
+    // specific categories rather than staying purely abstract.
+    topViewedCategories: topEntries(a.viewsByCategory, 10),
+    top3dInteractedCategories: topEntries(a.interactionsByCategory, 10),
   };
 });

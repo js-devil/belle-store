@@ -18,6 +18,7 @@ export default defineNuxtPlugin((nuxtApp) => {
       key: "belle-recently-viewed",
       state: useState("recently-viewed-slugs", () => []),
     },
+    { key: "belle-account", state: useState("account", () => null) },
   ];
 
   nuxtApp.hook("app:mounted", () => {

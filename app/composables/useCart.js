@@ -4,25 +4,27 @@ function lineKey(productId, size, color) {
 
 export function useCart() {
   const items = useState("cart-items", () => []);
+  const { showToast } = useToast();
 
   function addToCart(product, { qty = 1, size = null, color = null } = {}) {
     const key = lineKey(product.id, size, color);
     const existing = items.value.find((item) => item.key === key);
     if (existing) {
       existing.qty += qty;
-      return;
+    } else {
+      items.value.push({
+        key,
+        productId: product.id,
+        slug: product.slug,
+        name: product.title,
+        image: product.images.primary,
+        unitPriceUsd: product.priceUsd,
+        qty,
+        size,
+        color,
+      });
     }
-    items.value.push({
-      key,
-      productId: product.id,
-      slug: product.slug,
-      name: product.title,
-      image: product.images.primary,
-      unitPriceUsd: product.priceUsd,
-      qty,
-      size,
-      color,
-    });
+    showToast(`Added "${product.title}" to cart`);
   }
 
   function removeFromCart(key) {

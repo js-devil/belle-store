@@ -1,5 +1,6 @@
 export function useWishlist() {
   const ids = useState("wishlist-ids", () => []);
+  const { showToast } = useToast();
 
   function has(slug) {
     return ids.value.includes(slug);
@@ -10,6 +11,7 @@ export function useWishlist() {
       remove(slug);
     } else {
       ids.value.push(slug);
+      showToast("Added to wishlist");
     }
   }
 

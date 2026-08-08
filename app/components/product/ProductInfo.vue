@@ -35,7 +35,7 @@
     <div v-if="product.sizes && product.sizes.length" class="product-form__item">
       <label
         >Size: <strong>{{ selectedSize }}</strong>
-        <a v-if="product.sizeChart" href="#tab3" class="sizelink" @click.prevent="$emit('go-to-size-chart')"
+        <a v-if="product.sizeChart" href="#tab3" class="sizelink ml-2" @click.prevent="$emit('go-to-size-chart')"
           >Size Guide</a
         ></label
       >

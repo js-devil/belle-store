@@ -1,7 +1,11 @@
 <template>
   <Teleport to="body">
     <div class="viewer3d-overlay" @click.self="handleClose">
-      <div ref="panelEl" class="viewer3d-panel" :class="{ 'is-fullscreen': isFullscreen }">
+      <div
+        ref="panelEl"
+        class="viewer3d-panel"
+        :class="{ 'is-fullscreen': isFullscreen, 'is-dark': darkBackground }"
+      >
         <div class="viewer3d-toolbar">
           <button
             v-if="modelSrc"
@@ -31,6 +35,7 @@
             touch-action="none"
             shadow-intensity="0.5"
             exposure="1"
+            :environment-image="darkBackground ? 'legacy' : undefined"
             class="viewer3d-model"
             @progress="handleProgress"
             @camera-change="handleCameraChange"
@@ -108,10 +113,15 @@ const props = defineProps({
   // independent of the interactive colour-swatch feature below. Keyed by
   // material name: { hex, metallic?, roughness? }.
   materialColors: { type: Object, default: null },
+  // Most models read best against the light default panel, but a light-
+  // coloured model (e.g. cream fabric) can wash out against white - lets a
+  // specific product opt into a dark panel instead for better contrast.
+  darkBackground: { type: Boolean, default: false },
 });
-const emit = defineEmits(["close"]);
-
-const { logEvent } = useAnalytics();
+// Gesture/error/load-time counts are reported up to the page (which owns
+// the whole visit's engagement summary and sends ONE consolidated event on
+// leaving - see useProductEngagement.js) rather than logged individually here.
+const emit = defineEmits(["close", "rotate", "zoom", "error", "load-time"]);
 
 const panelEl = ref(null);
 const viewerEl = ref(null);
@@ -119,6 +129,12 @@ const isFullscreen = ref(false);
 const isLoaded = ref(false);
 const loadPercent = ref(0);
 const hasError = ref(false);
+// The component mounts the instant the viewer opens (v-if="show3dViewer" in
+// ProductGallery.vue), so this is effectively "viewer opened" - the natural
+// start point for measuring how long the model takes to load, which is the
+// RQ4 adoption-barrier metric (device/network barriers show up as slow or
+// failed loads).
+const loadStartedAt = Date.now();
 // Starts unset (not colors[0]) since no tint is applied until the user
 // explicitly picks a swatch - see handleLoad().
 const selectedColorName = ref(null);
@@ -144,6 +160,30 @@ function hexToRgb01(hex) {
 function applyMaterialColor(material, color) {
   const pbr = material.pbrMetallicRoughness;
   if (!pbr) return;
+  // Clearing baseColorTexture/occlusionTexture before tinting was the fix
+  // for the wingback armchair's baked textures compounding toward black (see
+  // notes below) - but it's a real regression on other products that rely
+  // on their baked texture for a good-looking result under a curated tint
+  // (e.g. coffeeshop-table-chair-set's "Coffee" wood grain goes flat and
+  // pale without it). Scoped to the one product it was actually fixing,
+  // rather than applied to every product using colour swatches.
+  if (props.productSlug === "wingback-armchair") {
+    // baseColorFactor MULTIPLIES against any existing baseColorTexture, it
+    // doesn't replace it - on a material with a real (and often quite dark)
+    // baked photo texture, tinting on top of that just compounds toward
+    // black instead of showing the intended colour. Clearing the texture
+    // first makes the factor the sole, true visible colour.
+    if (pbr.baseColorTexture?.texture) pbr.baseColorTexture.setTexture(null);
+    // The occlusion texture multiplies over the FINAL lit result (base
+    // colour AND lighting both included) - a baked AO map that's
+    // aggressively dark across most of the surface (as this asset has)
+    // crushes the whole material toward black no matter what colour or
+    // exposure is set, since it's applied after everything else. Confirmed
+    // by direct testing: clearing it (and nothing else) was the actual fix
+    // for this model, which stayed near-black through every colour and
+    // exposure value tried.
+    if (material.occlusionTexture?.texture) material.occlusionTexture.setTexture(null);
+  }
   pbr.setBaseColorFactor(hexToRgb01(color.hex));
   if (color.metallic != null) pbr.setMetallicFactor(color.metallic);
   if (color.roughness != null) pbr.setRoughnessFactor(color.roughness);
@@ -165,6 +205,7 @@ function selectColor(color) {
 
 function handleLoad() {
   isLoaded.value = true;
+  emit("load-time", Date.now() - loadStartedAt);
   const materials = viewerEl.value?.model?.materials ?? [];
 
   // Curated per-material fixups (a table's wood vs. marble vs. metal stand,
@@ -219,6 +260,7 @@ function handleError(event) {
   console.error("model-viewer failed to load", props.modelSrc, event.detail);
   hasError.value = true;
   isLoaded.value = true;
+  emit("error");
 }
 
 // The native Fullscreen API is unreliable on mobile browsers (notably iOS
@@ -249,16 +291,14 @@ function handleCameraChange(event) {
       Math.abs(orbit.phi - lastOrbit.phi) > 0.001;
     const zoomed = Math.abs(orbit.radius - lastOrbit.radius) > 0.001;
 
-    if (zoomed) gestureKind = "zoom_event";
-    else if (rotated && gestureKind !== "zoom_event") gestureKind = "rotate_gesture";
+    if (zoomed) gestureKind = "zoom";
+    else if (rotated && gestureKind !== "zoom") gestureKind = "rotate";
   }
   lastOrbit = orbit;
 
   clearTimeout(gestureTimer);
   gestureTimer = setTimeout(() => {
-    if (gestureKind) {
-      logEvent(gestureKind, { slug: props.productSlug });
-    }
+    if (gestureKind) emit(gestureKind);
     gestureKind = null;
   }, GESTURE_IDLE_MS);
 }
@@ -300,7 +340,7 @@ onBeforeUnmount(() => {
 }
 .viewer3d-panel {
   position: relative;
-  background: #111;
+  background: #e8e8e8;
   border-radius: 4px;
   width: 90vw;
   max-width: 900px;
@@ -325,6 +365,52 @@ onBeforeUnmount(() => {
   max-height: none;
   border-radius: 0;
 }
+/* Per-product override (darkBackground prop) for a light-coloured model
+   that washes out against the default white panel - mirrors the panel's
+   old dark theme, so every child element that assumes a light background
+   needs its own dark-mode flip here too. */
+.viewer3d-panel.is-dark {
+  background: #111;
+}
+.viewer3d-panel.is-dark .viewer3d-icon-btn {
+  background: rgba(255, 255, 255, 0.12);
+  color: #fff;
+}
+.viewer3d-panel.is-dark .viewer3d-icon-btn:hover {
+  background: rgba(255, 255, 255, 0.25);
+}
+.viewer3d-panel.is-dark .viewer3d-loading {
+  background: rgba(0, 0, 0, 0.45);
+}
+.viewer3d-panel.is-dark .viewer3d-loading__bar {
+  background: rgba(255, 255, 255, 0.2);
+}
+.viewer3d-panel.is-dark .viewer3d-loading__fill {
+  background: #fff;
+}
+.viewer3d-panel.is-dark .viewer3d-loading__text {
+  color: rgba(255, 255, 255, 0.85);
+}
+.viewer3d-panel.is-dark .viewer3d-hint {
+  color: rgba(255, 255, 255, 0.65);
+}
+.viewer3d-panel.is-dark .viewer3d-colors__label {
+  color: rgba(255, 255, 255, 0.75);
+}
+.viewer3d-panel.is-dark .viewer3d-color-swatch {
+  border-color: rgba(255, 255, 255, 0.5);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.4);
+}
+.viewer3d-panel.is-dark .viewer3d-color-swatch.active {
+  border-color: #fff;
+  box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.35);
+}
+.viewer3d-panel.is-dark .viewer3d-colors__selected {
+  color: #fff;
+}
+.viewer3d-panel.is-dark .viewer3d-message {
+  color: #ccc;
+}
 .viewer3d-toolbar {
   position: absolute;
   top: 10px;
@@ -334,9 +420,9 @@ onBeforeUnmount(() => {
   z-index: 5;
 }
 .viewer3d-icon-btn {
-  background: rgba(255, 255, 255, 0.12);
+  background: rgba(17, 17, 17, 0.06);
   border: none;
-  color: #fff;
+  color: #111;
   width: 34px;
   height: 34px;
   border-radius: 50%;
@@ -347,7 +433,7 @@ onBeforeUnmount(() => {
   justify-content: center;
 }
 .viewer3d-icon-btn:hover {
-  background: rgba(255, 255, 255, 0.25);
+  background: rgba(17, 17, 17, 0.12);
 }
 .viewer3d-model {
   width: 100%;
@@ -362,7 +448,7 @@ onBeforeUnmount(() => {
   align-items: center;
   justify-content: center;
   gap: 12px;
-  background: rgba(0, 0, 0, 0.45);
+  background: rgba(232, 232, 232, 0.85);
   z-index: 4;
   pointer-events: none;
 }
@@ -370,16 +456,16 @@ onBeforeUnmount(() => {
   width: 160px;
   height: 4px;
   border-radius: 2px;
-  background: rgba(255, 255, 255, 0.2);
+  background: rgba(17, 17, 17, 0.12);
   overflow: hidden;
 }
 .viewer3d-loading__fill {
   height: 100%;
-  background: #fff;
+  background: #111;
   transition: width 0.15s ease-out;
 }
 .viewer3d-loading__text {
-  color: rgba(255, 255, 255, 0.85);
+  color: rgba(17, 17, 17, 0.75);
   font-size: 13px;
   margin: 0;
 }
@@ -389,7 +475,7 @@ onBeforeUnmount(() => {
   left: 0;
   right: 0;
   text-align: center;
-  color: rgba(255, 255, 255, 0.65);
+  color: rgba(17, 17, 17, 0.55);
   font-size: 12px;
   margin: 0;
   pointer-events: none;
@@ -406,7 +492,7 @@ onBeforeUnmount(() => {
   z-index: 5;
 }
 .viewer3d-colors__label {
-  color: rgba(255, 255, 255, 0.75);
+  color: rgba(17, 17, 17, 0.65);
   font-size: 12px;
   margin: 0;
 }
@@ -419,17 +505,17 @@ onBeforeUnmount(() => {
   width: 34px;
   height: 34px;
   border-radius: 50%;
-  border: 3px solid rgba(255, 255, 255, 0.5);
+  border: 3px solid rgba(17, 17, 17, 0.2);
   cursor: pointer;
   padding: 0;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.4);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.15);
 }
 .viewer3d-color-swatch.active {
-  border-color: #fff;
-  box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.35);
+  border-color: #111;
+  box-shadow: 0 0 0 3px rgba(17, 17, 17, 0.15);
 }
 .viewer3d-colors__selected {
-  color: #fff;
+  color: #111;
   font-size: 12px;
   font-weight: 600;
   margin: 0;
@@ -446,7 +532,7 @@ onBeforeUnmount(() => {
   margin-bottom: 16px;
 }
 .viewer3d-message {
-  color: #ccc;
+  color: #555;
 }
 </style>
 

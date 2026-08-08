@@ -7,7 +7,7 @@
           :key="image"
           href="javascript:void(0)"
           :class="{ active: index === activeIndex }"
-          @click="activeIndex = index"
+          @click="selectThumbnail(index)"
         >
           <img class="blur-up lazyload" :src="image" :alt="product.title" />
         </a>
@@ -43,7 +43,7 @@
           href="javascript:void(0)"
           class="btn prlightbox"
           title="Zoom"
-          @click="showLightbox = true"
+          @click="openLightbox"
           ><i class="icon anm anm-expand-l-arrows" aria-hidden="true"></i
         ></a>
       </div>
@@ -65,7 +65,12 @@
       :colors="product.colors"
       :color-target-materials="product.colorTargetMaterials"
       :material-colors="product.materialColors"
+      :dark-background="!!product.viewerDarkBackground"
       @close="show3dViewer = false"
+      @rotate="emit('rotate')"
+      @zoom="emit('zoom')"
+      @error="emit('viewer-error')"
+      @load-time="emit('load-time', $event)"
     />
   </div>
 </template>
@@ -74,6 +79,18 @@
 const props = defineProps({
   product: { type: Object, required: true },
 });
+// All engagement counts are emitted up to the page, which accumulates the
+// whole visit and sends one consolidated event on leaving - see
+// useProductEngagement.js.
+const emit = defineEmits([
+  "view-3d-opened",
+  "rotate",
+  "zoom",
+  "viewer-error",
+  "thumbnail-switch",
+  "image-zoom",
+  "load-time",
+]);
 
 const thumbnails = computed(() =>
   props.product.images.gallery?.length
@@ -85,10 +102,100 @@ const activeIndex = ref(0);
 const showLightbox = ref(false);
 const show3dViewer = ref(false);
 
+// Thumbnail dwell time: a switch itself is instant, so there's no "open"
+// event to watch like the viewer/lightbox - instead, the gap between one
+// switch and the next IS the time spent looking at that thumbnail's image.
+// Capped per-gap so a switch followed by, say, going to make coffee doesn't
+// get counted as browsing time; the trailing gap up to flush time (still
+// looking at the last-selected thumbnail when the visit ends) is added the
+// same way in currentOpenDurations() below.
+const THUMBNAIL_DWELL_CAP_MS = 15000;
+let lastThumbnailAt = null;
+const thumbnailDwellMs = ref(0);
+
+function selectThumbnail(index) {
+  const now = Date.now();
+  if (lastThumbnailAt != null) {
+    thumbnailDwellMs.value += Math.min(now - lastThumbnailAt, THUMBNAIL_DWELL_CAP_MS);
+  }
+  lastThumbnailAt = now;
+  activeIndex.value = index;
+  emit("thumbnail-switch");
+}
+
+function openLightbox() {
+  showLightbox.value = true;
+  emit("image-zoom");
+}
+
 function open3dViewer() {
   show3dViewer.value = true;
   showAutoTooltip.value = false;
+  emit("view-3d-opened");
 }
+
+// "Looking duration": how long the 3D viewer / image lightbox actually
+// stayed open, tracked here (rather than via a close event from the child)
+// because ProductGallery persists for the whole page visit while the
+// viewer/lightbox can be opened and closed several times, or left open
+// when the visitor navigates away entirely. A close event tied to the
+// child's onBeforeUnmount would miss that last case, since a hard
+// navigation tears down the page without ever running Vue's unmount
+// hooks - watching the open flags here and reading currentOpenDurations()
+// at flush time (see [slug].vue) covers a still-open viewer too.
+let viewer3dOpenedAt = null;
+let lightboxOpenedAt = null;
+const viewer3dOpenMs = ref(0);
+const imageLightboxOpenMs = ref(0);
+
+// Attention moved elsewhere - stop crediting thumbnail-dwell time so it
+// doesn't double-count the same wall-clock span the viewer/lightbox open
+// duration already covers.
+function closeThumbnailDwell() {
+  if (lastThumbnailAt != null) {
+    thumbnailDwellMs.value += Math.min(Date.now() - lastThumbnailAt, THUMBNAIL_DWELL_CAP_MS);
+    lastThumbnailAt = null;
+  }
+}
+
+watch(show3dViewer, (isOpen) => {
+  if (isOpen) {
+    viewer3dOpenedAt = Date.now();
+    closeThumbnailDwell();
+  } else if (viewer3dOpenedAt != null) {
+    viewer3dOpenMs.value += Date.now() - viewer3dOpenedAt;
+    viewer3dOpenedAt = null;
+  }
+});
+watch(showLightbox, (isOpen) => {
+  if (isOpen) {
+    lightboxOpenedAt = Date.now();
+    closeThumbnailDwell();
+  } else if (lightboxOpenedAt != null) {
+    imageLightboxOpenMs.value += Date.now() - lightboxOpenedAt;
+    lightboxOpenedAt = null;
+  }
+});
+
+function currentOpenDurations() {
+  const now = Date.now();
+  return {
+    viewer3dOpenMs: viewer3dOpenMs.value + (viewer3dOpenedAt != null ? now - viewer3dOpenedAt : 0),
+    // "Time inside the image zoom" broadened to the fuller 2D-inspection
+    // picture: lightbox open time, plus thumbnail dwell (see
+    // selectThumbnail() above) and reviews-tab dwell (see ProductTabs.vue,
+    // pulled in at [slug].vue's flush time) - all three are real,
+    // independently-measured spans, summed by the caller rather than here
+    // so this component doesn't need to know about the reviews tab.
+    imageLightboxOpenMs:
+      imageLightboxOpenMs.value +
+      (lightboxOpenedAt != null ? now - lightboxOpenedAt : 0) +
+      thumbnailDwellMs.value +
+      (lastThumbnailAt != null ? Math.min(now - lastThumbnailAt, THUMBNAIL_DWELL_CAP_MS) : 0),
+  };
+}
+
+defineExpose({ currentOpenDurations });
 
 // Surface the 3D-view tooltip on its own for a few seconds when the page
 // loads, rather than only on hover, so first-time visitors notice the

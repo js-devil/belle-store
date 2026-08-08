@@ -17,6 +17,8 @@
   --series-1: #2a78d6;
   --series-1-hover: #1c5cab;
   --series-1-area: rgba(42, 120, 214, 0.12);
+  --series-2: #eb6834;
+  --series-3: #8a3ffc;
 
   min-height: 100vh;
   background: var(--page-plane);
@@ -38,6 +40,8 @@
     --series-1: #3987e5;
     --series-1-hover: #86b6ef;
     --series-1-area: rgba(57, 135, 229, 0.16);
+    --series-2: #d9691f;
+    --series-3: #a56eff;
   }
 }
 :root[data-theme="dark"] .dashboard-shell {
@@ -52,5 +56,7 @@
   --series-1: #3987e5;
   --series-1-hover: #86b6ef;
   --series-1-area: rgba(57, 135, 229, 0.16);
+  --series-2: #d9691f;
+  --series-3: #a56eff;
 }
 </style>

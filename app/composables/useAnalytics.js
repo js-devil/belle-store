@@ -19,10 +19,16 @@ export function useAnalytics() {
     $fetch("/api/events", {
       method: "POST",
       body: { sessionId: getSessionId(), type, payload },
+      // Without this, a request fired from a beforeunload/unmount handler
+      // (i.e. every "product_engagement" flush - see useProductEngagement.js)
+      // can get silently cancelled mid-flight by the browser once real page
+      // unload begins, dropping that visit's data entirely. keepalive tells
+      // the browser to let it finish in the background instead.
+      keepalive: true,
     }).catch(() => {
       // Analytics failures must never surface to the shopper.
     });
   }
 
-  return { logEvent };
+  return { logEvent, getSessionId };
 }

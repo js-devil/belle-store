@@ -14,7 +14,7 @@
           <OrderSummary :items="items" :subtotal-usd="subtotalUsd" />
         </div>
         <div class="col-12 col-lg-5">
-          <PaymentPlaceholder />
+          <WalletPayment :items="items" :subtotal-usd="subtotalUsd" @order-placed="clearCart" />
         </div>
       </div>
     </div>
@@ -22,5 +22,5 @@
 </template>
 
 <script setup>
-const { items, subtotalUsd } = useCart();
+const { items, subtotalUsd, clearCart } = useCart();
 </script>

@@ -12,7 +12,17 @@
       <div class="product-single">
         <div class="row">
           <div class="col-lg-6 col-md-6 col-sm-12 col-12">
-            <ProductGallery :product="product" />
+            <ProductGallery
+              ref="galleryRef"
+              :product="product"
+              @view-3d-opened="engagement.recordViewer3dOpened()"
+              @rotate="engagement.recordRotate()"
+              @zoom="engagement.recordZoom()"
+              @viewer-error="engagement.recordViewerError()"
+              @thumbnail-switch="engagement.recordThumbnailSwitch()"
+              @image-zoom="engagement.recordImageZoom()"
+              @load-time="engagement.recordLoadTime($event)"
+            />
           </div>
           <div class="col-lg-6 col-md-6 col-sm-12 col-12">
             <ProductInfo
@@ -20,8 +30,8 @@
               :in-wishlist="inWishlist"
               @add-to-cart="handleAddToCart"
               @add-wishlist="handleWishlist"
-              @go-to-reviews="tabsRef?.goToReviews()"
-              @go-to-size-chart="tabsRef?.goToSizeChart()"
+              @go-to-reviews="handleGoToReviews"
+              @go-to-size-chart="handleGoToSizeChart"
             />
           </div>
         </div>
@@ -76,7 +86,6 @@ const route = useRoute();
 const { addToCart } = useCart();
 const { has, toggle: toggleWishlist } = useWishlist();
 const { markViewed, slugs: recentlyViewedSlugs } = useRecentlyViewed();
-const { logEvent } = useAnalytics();
 
 const product = computed(() => getProductBySlug(route.params.slug));
 
@@ -94,31 +103,58 @@ const recentlyViewedProducts = computed(() =>
 );
 
 const tabsRef = ref(null);
+const galleryRef = ref(null);
 
 useHead({ title: `${product.value.title} | Belle Store` });
 
-const viewStartedAt = Date.now();
+// One consolidated engagement summary per visit, sent on leaving - see
+// useProductEngagement.js for why this replaced a network call per gesture.
+const engagement = useProductEngagement(product.value);
 
-function logTimeOnPage() {
-  const seconds = Math.round((Date.now() - viewStartedAt) / 1000);
-  logEvent("time_on_page", { slug: product.value.slug, seconds });
+// Pulled (not pushed) so a viewer/lightbox/reviews-tab left open when the
+// visitor navigates away still gets counted - see currentOpenDurations() in
+// ProductGallery.vue for why this can't just be a close event instead.
+// "2D viewing time" combines the image lightbox, thumbnail dwell (both from
+// ProductGallery) with reviews-tab dwell (from ProductTabs) into one total,
+// since all three are the same thing from the study's point of view -
+// evaluating the product visually/via feedback without the 3D viewer.
+function flushEngagement() {
+  const durations = galleryRef.value?.currentOpenDurations();
+  if (durations) {
+    engagement.recordViewer3dOpenMs(durations.viewer3dOpenMs);
+    const reviewsOpenMs = tabsRef.value?.currentReviewsOpenMs?.() ?? 0;
+    engagement.recordImageLightboxOpenMs(durations.imageLightboxOpenMs + reviewsOpenMs);
+  }
+  engagement.flush();
 }
 
 onMounted(() => {
   markViewed(product.value.slug);
-  window.addEventListener("beforeunload", logTimeOnPage);
+  window.addEventListener("beforeunload", flushEngagement);
 });
 onBeforeUnmount(() => {
-  logTimeOnPage();
-  window.removeEventListener("beforeunload", logTimeOnPage);
+  flushEngagement();
+  window.removeEventListener("beforeunload", flushEngagement);
 });
 
 function handleAddToCart({ qty, size, color }) {
   addToCart(product.value, { qty, size, color });
-  logEvent("add_to_cart", { slug: product.value.slug, qty });
+  engagement.recordAddedToCart();
 }
 
 function handleWishlist() {
+  const wasInWishlist = has(product.value.slug);
   toggleWishlist(product.value.slug);
+  if (!wasInWishlist) engagement.recordAddedToWishlist();
+}
+
+function handleGoToReviews() {
+  tabsRef.value?.goToReviews();
+  engagement.recordViewedReviews();
+}
+
+function handleGoToSizeChart() {
+  tabsRef.value?.goToSizeChart();
+  engagement.recordViewedSizeChart();
 }
 </script>

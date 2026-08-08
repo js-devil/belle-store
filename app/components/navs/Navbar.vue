@@ -40,21 +40,31 @@
             ><i class="anm anm-user-al" aria-hidden="true"></i
           ></span>
           <ul class="customer-links list-inline">
+            <li v-if="isLoggedIn" class="wallet-badge" :title="`Logged in as ${account.name}`">
+              <i class="anm anm-money-bill-alt" aria-hidden="true"></i>
+              {{ formatPrice(account.walletUsd) }}
+            </li>
+            <li v-if="isLoggedIn"><a href="#" @click.prevent="logout">Log out</a></li>
+            <li v-else><a href="#" @click.prevent="showModal = true">Sign In</a></li>
             <li><NuxtLink to="/wishlist">Wishlist</NuxtLink></li>
           </ul>
         </div>
       </div>
     </div>
+
+    <AccountModal v-if="showModal" @close="showModal = false" @authenticated="showModal = false" />
   </div>
 </template>
 
 <script setup>
 import { COUNTRIES } from "@/composables/useCurrency.js";
 
-const { country, setCountry } = useCurrency();
+const { country, setCountry, formatPrice } = useCurrency();
+const { account, isLoggedIn, logout } = useAccount();
 
 const isOpen = ref(false);
 const pickerEl = ref(null);
+const showModal = ref(false);
 
 function selectCountry(code) {
   setCountry(code);
@@ -79,6 +89,13 @@ onBeforeUnmount(() => document.removeEventListener("click", handleClickOutside))
   .top-header > .container-fluid {
     padding: 0 12px;
   }
+}
+.wallet-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-weight: 600;
+  color: #2e7d32;
 }
 .country-option {
   display: flex;

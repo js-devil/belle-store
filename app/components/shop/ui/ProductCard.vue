@@ -91,7 +91,7 @@
         ></i>
       </div>
       <!-- color swatches -->
-      <ul v-if="product.colors && product.colors.length" class="swatches">
+      <ul v-if="product.colors && product.colors.length" class="swatches hide">
         <li
           v-for="color in product.colors"
           :key="color.name"

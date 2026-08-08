@@ -1,0 +1,34 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <style>
+      html, body { margin: 0; padding: 0; background: #f7f7f7; }
+      model-viewer { width: 800px; height: 800px; --poster-color: transparent; }
+    </style>
+    <script src="/vendor/model-viewer.min.js"></script>
+  </head>
+  <body>
+    <model-viewer id="mv" camera-controls disable-zoom shadow-intensity="1" exposure="1"></model-viewer>
+    <script>
+      const params = new URLSearchParams(location.search);
+      const mv = document.getElementById("mv");
+      // Listeners must attach BEFORE setting src/cameraOrbit - a fast local
+      // load can fire "load" before a listener registered afterward ever
+      // gets a chance to exist, permanently missing the event.
+      mv.addEventListener("load", () => {
+        // Applying cameraOrbit takes one more frame to actually reflect in
+        // the render - a rAF (or two) after "load" ensures the screenshot
+        // Playwright takes isn't a frame behind the requested angle.
+        requestAnimationFrame(() => requestAnimationFrame(() => {
+          document.body.dataset.ready = "true";
+        }));
+      });
+      mv.addEventListener("error", () => {
+        document.body.dataset.ready = "error";
+      });
+      mv.src = params.get("src");
+      mv.cameraOrbit = params.get("orbit") || "0deg 75deg 105%";
+    </script>
+  </body>
+</html>

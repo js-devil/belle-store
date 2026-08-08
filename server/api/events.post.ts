@@ -1,25 +1,9 @@
-import { getStore } from "@netlify/blobs";
-const store = getStore({
-  name: "interaction-events",
-  siteID: process.env.NETLIFY_SITE_ID,
-  token: process.env.NETLIFY_AUTH_TOKEN,
-})
+import { logAnalyticsEvent } from "../utils/analyticsLog";
 
-// A short random suffix for the blob key - doesn't need to be
-// cryptographically random, just unique enough to avoid same-millisecond
-// collisions, so this avoids depending on Node's global `crypto` (and the
-// @types/node install that would otherwise be needed just for that).
-function randomSuffix() {
-  return Math.random().toString(36).slice(2, 10);
-}
-
-const VALID_TYPES = new Set([
-  "page_view",
-  "time_on_page",
-  "rotate_gesture",
-  "zoom_event",
-  "add_to_cart",
-]);
+// Just two event types: one consolidated "product_engagement" event per
+// product-page visit (see useProductEngagement.js), rather than a separate
+// network call per gesture/click, plus "purchase" at actual checkout.
+const VALID_TYPES = new Set(["product_engagement", "purchase"]);
 
 export default defineEventHandler(async (event) => {
   const body = await readBody(event);
@@ -30,22 +14,10 @@ export default defineEventHandler(async (event) => {
 
   // Anonymous by design: only a random per-session id (see useAnalytics.js),
   // an event type, and a small payload are ever recorded - no name, no
-  // account, no IP, no payment data.
-  const record = {
-    sessionId: body.sessionId,
-    type: body.type,
-    payload: body.payload ?? {},
-    timestamp: new Date().toISOString(),
-  };
-
-  // One blob per event (keyed uniquely) rather than appending to a single
-  // growing blob - Netlify's serverless functions have no shared/writable
-  // filesystem between invocations, and a single-blob read-modify-write
-  // would lose events under concurrent traffic. The analytics/summary
-  // endpoint lists and aggregates every blob in this store.
-
-  const key = `${record.timestamp}-${randomSuffix()}`;
-  await store.setJSON(key, record);
+  // account, no IP, no payment data. Even once accounts/wallets exist
+  // (see account/purchase.post.ts), that "purchase" event is logged the same
+  // anonymous way - it never carries a username, just the session id.
+  await logAnalyticsEvent(body.type, body.sessionId, body.payload ?? {});
 
   return { ok: true };
 });

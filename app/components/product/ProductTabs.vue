@@ -2,18 +2,18 @@
   <div class="tabs-listing" ref="tabsEl">
     <ul class="product-tabs">
       <li :class="{ active: activeTab === 'details' }">
-        <a href="#" @click.prevent="activeTab = 'details'">Product Details</a>
+        <a href="#" @click.prevent.stop="activeTab = 'details'">Product Details</a>
       </li>
       <li :class="{ active: activeTab === 'reviews' }">
-        <a href="#" @click.prevent="activeTab = 'reviews'"
+        <a href="#" @click.prevent.stop="activeTab = 'reviews'"
           >Reviews ({{ product.reviews.length }})</a
         >
       </li>
       <li v-if="product.sizeChart" :class="{ active: activeTab === 'sizeChart' }">
-        <a href="#" @click.prevent="activeTab = 'sizeChart'">Size Chart</a>
+        <a href="#" @click.prevent.stop="activeTab = 'sizeChart'">Size Chart</a>
       </li>
       <li :class="{ active: activeTab === 'shipping' }">
-        <a href="#" @click.prevent="activeTab = 'shipping'">Shipping &amp; Returns</a>
+        <a href="#" @click.prevent.stop="activeTab = 'shipping'">Shipping &amp; Returns</a>
       </li>
     </ul>
     <div class="tab-container">
@@ -91,6 +91,26 @@ const props = defineProps({
 const activeTab = ref("details");
 const tabsEl = ref(null);
 
+// Reviews are a real 2D-evaluation channel (checking star ratings/written
+// feedback before deciding) - timed the same open/close-span way as the 3D
+// viewer and image lightbox in ProductGallery.vue, and folded into the same
+// "2D viewing time" total at flush time (see [slug].vue).
+let reviewsOpenedAt = null;
+const reviewsTabOpenMs = ref(0);
+
+watch(activeTab, (tab, previousTab) => {
+  if (tab === "reviews") {
+    reviewsOpenedAt = Date.now();
+  } else if (previousTab === "reviews" && reviewsOpenedAt != null) {
+    reviewsTabOpenMs.value += Date.now() - reviewsOpenedAt;
+    reviewsOpenedAt = null;
+  }
+});
+
+function currentReviewsOpenMs() {
+  return reviewsTabOpenMs.value + (reviewsOpenedAt != null ? Date.now() - reviewsOpenedAt : 0);
+}
+
 defineExpose({
   goToReviews: () => {
     activeTab.value = "reviews";
@@ -98,5 +118,21 @@ defineExpose({
   goToSizeChart: () => {
     if (props.product.sizeChart) activeTab.value = "sizeChart";
   },
+  currentReviewsOpenMs,
 });
 </script>
+
+<style scoped>
+/* The legacy template's CSS (style.css) only sets display:inline-block on
+   the star-rating and byline pieces individually, with no gap between them
+   or the title - they render squished together relying on incidental
+   template whitespace. Laying the header out as a wrapping flex row gives
+   consistent spacing regardless of how much whitespace the markup has. */
+.spr-review-header {
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: 6px 16px;
+  margin-bottom: 8px;
+}
+</style>

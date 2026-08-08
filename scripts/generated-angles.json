@@ -1,0 +1,446 @@
+{
+  "canon-akira-power-bike": [
+    "/models/generated-angles/bikes/canon-akira-power-bike-back.jpg",
+    "/models/generated-angles/bikes/canon-akira-power-bike-front.jpg",
+    "/models/generated-angles/bikes/canon-akira-power-bike-side.jpg",
+    "/models/generated-angles/bikes/canon-akira-power-bike-three-quarter.jpg"
+  ],
+  "delivery-cargo-bike": [
+    "/models/generated-angles/bikes/delivery-cargo-bike-back.jpg",
+    "/models/generated-angles/bikes/delivery-cargo-bike-front.jpg",
+    "/models/generated-angles/bikes/delivery-cargo-bike-side.jpg",
+    "/models/generated-angles/bikes/delivery-cargo-bike-three-quarter.jpg"
+  ],
+  "jawa-classic-motorcycle": [
+    "/models/generated-angles/bikes/jawa-classic-motorcycle-back.jpg",
+    "/models/generated-angles/bikes/jawa-classic-motorcycle-front.jpg",
+    "/models/generated-angles/bikes/jawa-classic-motorcycle-side.jpg",
+    "/models/generated-angles/bikes/jawa-classic-motorcycle-three-quarter.jpg"
+  ],
+  "racing-bike": [
+    "/models/generated-angles/bikes/racing-bike-back.jpg",
+    "/models/generated-angles/bikes/racing-bike-front.jpg",
+    "/models/generated-angles/bikes/racing-bike-side.jpg",
+    "/models/generated-angles/bikes/racing-bike-three-quarter.jpg"
+  ],
+  "sports-motorcycle": [
+    "/models/generated-angles/bikes/sports-motorcycle-back.jpg",
+    "/models/generated-angles/bikes/sports-motorcycle-front.jpg",
+    "/models/generated-angles/bikes/sports-motorcycle-side.jpg",
+    "/models/generated-angles/bikes/sports-motorcycle-three-quarter.jpg"
+  ],
+  "suzuki-gsx-750": [
+    "/models/generated-angles/bikes/suzuki-gsx-750-back.jpg",
+    "/models/generated-angles/bikes/suzuki-gsx-750-front.jpg",
+    "/models/generated-angles/bikes/suzuki-gsx-750-side.jpg",
+    "/models/generated-angles/bikes/suzuki-gsx-750-three-quarter.jpg"
+  ],
+  "vintage-russian-motorcycle": [
+    "/models/generated-angles/bikes/vintage-russian-motorcycle-back.jpg",
+    "/models/generated-angles/bikes/vintage-russian-motorcycle-front.jpg",
+    "/models/generated-angles/bikes/vintage-russian-motorcycle-side.jpg",
+    "/models/generated-angles/bikes/vintage-russian-motorcycle-three-quarter.jpg"
+  ],
+  "yamaha-vino-scooter": [
+    "/models/generated-angles/bikes/yamaha-vino-scooter-back.jpg",
+    "/models/generated-angles/bikes/yamaha-vino-scooter-front.jpg",
+    "/models/generated-angles/bikes/yamaha-vino-scooter-side.jpg",
+    "/models/generated-angles/bikes/yamaha-vino-scooter-three-quarter.jpg"
+  ],
+  "adjustable-desk-lamp": [
+    "/models/generated-angles/electronics/adjustable-desk-lamp-back.jpg",
+    "/models/generated-angles/electronics/adjustable-desk-lamp-front.jpg",
+    "/models/generated-angles/electronics/adjustable-desk-lamp-side.jpg",
+    "/models/generated-angles/electronics/adjustable-desk-lamp-three-quarter.jpg"
+  ],
+  "automatic-bread-machine": [
+    "/models/generated-angles/electronics/automatic-bread-machine-back.jpg",
+    "/models/generated-angles/electronics/automatic-bread-machine-front.jpg",
+    "/models/generated-angles/electronics/automatic-bread-machine-side.jpg",
+    "/models/generated-angles/electronics/automatic-bread-machine-three-quarter.jpg"
+  ],
+  "charcoal-bbq-grill": [
+    "/models/generated-angles/electronics/charcoal-bbq-grill-back.jpg",
+    "/models/generated-angles/electronics/charcoal-bbq-grill-front.jpg",
+    "/models/generated-angles/electronics/charcoal-bbq-grill-side.jpg",
+    "/models/generated-angles/electronics/charcoal-bbq-grill-three-quarter.jpg"
+  ],
+  "cuisinart-coffee-maker": [
+    "/models/generated-angles/electronics/cuisinart-coffee-maker-back.jpg",
+    "/models/generated-angles/electronics/cuisinart-coffee-maker-front.jpg",
+    "/models/generated-angles/electronics/cuisinart-coffee-maker-side.jpg",
+    "/models/generated-angles/electronics/cuisinart-coffee-maker-three-quarter.jpg"
+  ],
+  "electric-barbecue-grill": [
+    "/models/generated-angles/electronics/electric-barbecue-grill-back.jpg",
+    "/models/generated-angles/electronics/electric-barbecue-grill-front.jpg",
+    "/models/generated-angles/electronics/electric-barbecue-grill-side.jpg",
+    "/models/generated-angles/electronics/electric-barbecue-grill-three-quarter.jpg"
+  ],
+  "flat-screen-television": [
+    "/models/generated-angles/electronics/flat-screen-television-back.jpg",
+    "/models/generated-angles/electronics/flat-screen-television-front.jpg",
+    "/models/generated-angles/electronics/flat-screen-television-side.jpg",
+    "/models/generated-angles/electronics/flat-screen-television-three-quarter.jpg"
+  ],
+  "front-load-drum-washing-machine": [
+    "/models/generated-angles/electronics/front-load-drum-washing-machine-back.jpg",
+    "/models/generated-angles/electronics/front-load-drum-washing-machine-front.jpg",
+    "/models/generated-angles/electronics/front-load-drum-washing-machine-side.jpg",
+    "/models/generated-angles/electronics/front-load-drum-washing-machine-three-quarter.jpg"
+  ],
+  "haier-inverter-air-conditioner": [
+    "/models/generated-angles/electronics/haier-inverter-air-conditioner-back.jpg",
+    "/models/generated-angles/electronics/haier-inverter-air-conditioner-front.jpg",
+    "/models/generated-angles/electronics/haier-inverter-air-conditioner-side.jpg",
+    "/models/generated-angles/electronics/haier-inverter-air-conditioner-three-quarter.jpg"
+  ],
+  "logitech-audio-speaker": [
+    "/models/generated-angles/electronics/logitech-audio-speaker-back.jpg",
+    "/models/generated-angles/electronics/logitech-audio-speaker-front.jpg",
+    "/models/generated-angles/electronics/logitech-audio-speaker-side.jpg",
+    "/models/generated-angles/electronics/logitech-audio-speaker-three-quarter.jpg"
+  ],
+  "microwave-oven": [
+    "/models/generated-angles/electronics/microwave-oven-back.jpg",
+    "/models/generated-angles/electronics/microwave-oven-front.jpg",
+    "/models/generated-angles/electronics/microwave-oven-side.jpg",
+    "/models/generated-angles/electronics/microwave-oven-three-quarter.jpg"
+  ],
+  "panasonic-nn-sn755s-microwave": [
+    "/models/generated-angles/electronics/panasonic-nn-sn755s-microwave-back.jpg",
+    "/models/generated-angles/electronics/panasonic-nn-sn755s-microwave-front.jpg",
+    "/models/generated-angles/electronics/panasonic-nn-sn755s-microwave-side.jpg",
+    "/models/generated-angles/electronics/panasonic-nn-sn755s-microwave-three-quarter.jpg"
+  ],
+  "portable-coffee-machine": [
+    "/models/generated-angles/electronics/portable-coffee-machine-back.jpg",
+    "/models/generated-angles/electronics/portable-coffee-machine-front.jpg",
+    "/models/generated-angles/electronics/portable-coffee-machine-side.jpg",
+    "/models/generated-angles/electronics/portable-coffee-machine-three-quarter.jpg"
+  ],
+  "salamander-grill": [
+    "/models/generated-angles/electronics/salamander-grill-back.jpg",
+    "/models/generated-angles/electronics/salamander-grill-front.jpg",
+    "/models/generated-angles/electronics/salamander-grill-side.jpg",
+    "/models/generated-angles/electronics/salamander-grill-three-quarter.jpg"
+  ],
+  "small-desk-fan": [
+    "/models/generated-angles/electronics/small-desk-fan-back.jpg",
+    "/models/generated-angles/electronics/small-desk-fan-front.jpg",
+    "/models/generated-angles/electronics/small-desk-fan-side.jpg",
+    "/models/generated-angles/electronics/small-desk-fan-three-quarter.jpg"
+  ],
+  "classic-sofa-set": [
+    "/models/generated-angles/furniture/classic-sofa-set-back.jpg",
+    "/models/generated-angles/furniture/classic-sofa-set-front.jpg",
+    "/models/generated-angles/furniture/classic-sofa-set-side.jpg",
+    "/models/generated-angles/furniture/classic-sofa-set-three-quarter.jpg"
+  ],
+  "claudia-loveseat-antique-gold-velvet": [
+    "/models/generated-angles/furniture/claudia-loveseat-antique-gold-velvet-back.jpg",
+    "/models/generated-angles/furniture/claudia-loveseat-antique-gold-velvet-front.jpg",
+    "/models/generated-angles/furniture/claudia-loveseat-antique-gold-velvet-side.jpg",
+    "/models/generated-angles/furniture/claudia-loveseat-antique-gold-velvet-three-quarter.jpg"
+  ],
+  "coffeeshop-table-chair-set": [
+    "/models/generated-angles/furniture/coffeeshop-table-chair-set-back.jpg",
+    "/models/generated-angles/furniture/coffeeshop-table-chair-set-front.jpg",
+    "/models/generated-angles/furniture/coffeeshop-table-chair-set-side.jpg",
+    "/models/generated-angles/furniture/coffeeshop-table-chair-set-three-quarter.jpg"
+  ],
+  "dinner-table-and-chairs-set": [
+    "/models/generated-angles/furniture/dinner-table-and-chairs-set-back.jpg",
+    "/models/generated-angles/furniture/dinner-table-and-chairs-set-front.jpg",
+    "/models/generated-angles/furniture/dinner-table-and-chairs-set-side.jpg",
+    "/models/generated-angles/furniture/dinner-table-and-chairs-set-three-quarter.jpg"
+  ],
+  "dresser-and-vanity-table": [
+    "/models/generated-angles/furniture/dresser-and-vanity-table-back.jpg",
+    "/models/generated-angles/furniture/dresser-and-vanity-table-front.jpg",
+    "/models/generated-angles/furniture/dresser-and-vanity-table-side.jpg",
+    "/models/generated-angles/furniture/dresser-and-vanity-table-three-quarter.jpg"
+  ],
+  "full-wardrobe-set": [
+    "/models/generated-angles/furniture/full-wardrobe-set-back.jpg",
+    "/models/generated-angles/furniture/full-wardrobe-set-front.jpg",
+    "/models/generated-angles/furniture/full-wardrobe-set-side.jpg",
+    "/models/generated-angles/furniture/full-wardrobe-set-three-quarter.jpg"
+  ],
+  "living-room-furniture-set": [
+    "/models/generated-angles/furniture/living-room-furniture-set-back.jpg",
+    "/models/generated-angles/furniture/living-room-furniture-set-front.jpg",
+    "/models/generated-angles/furniture/living-room-furniture-set-side.jpg",
+    "/models/generated-angles/furniture/living-room-furniture-set-three-quarter.jpg"
+  ],
+  "living-room-sofa": [
+    "/models/generated-angles/furniture/living-room-sofa-back.jpg",
+    "/models/generated-angles/furniture/living-room-sofa-front.jpg",
+    "/models/generated-angles/furniture/living-room-sofa-side.jpg",
+    "/models/generated-angles/furniture/living-room-sofa-three-quarter.jpg"
+  ],
+  "modern-arm-chair": [
+    "/models/generated-angles/furniture/modern-arm-chair-back.jpg",
+    "/models/generated-angles/furniture/modern-arm-chair-front.jpg",
+    "/models/generated-angles/furniture/modern-arm-chair-side.jpg",
+    "/models/generated-angles/furniture/modern-arm-chair-three-quarter.jpg"
+  ],
+  "occasional-table": [
+    "/models/generated-angles/furniture/occasional-table-back.jpg",
+    "/models/generated-angles/furniture/occasional-table-front.jpg",
+    "/models/generated-angles/furniture/occasional-table-side.jpg",
+    "/models/generated-angles/furniture/occasional-table-three-quarter.jpg"
+  ],
+  "outdoor-cafe-furniture-pack": [
+    "/models/generated-angles/furniture/outdoor-cafe-furniture-pack-back.jpg",
+    "/models/generated-angles/furniture/outdoor-cafe-furniture-pack-front.jpg",
+    "/models/generated-angles/furniture/outdoor-cafe-furniture-pack-side.jpg",
+    "/models/generated-angles/furniture/outdoor-cafe-furniture-pack-three-quarter.jpg"
+  ],
+  "reclaimed-tv-stand": [
+    "/models/generated-angles/furniture/reclaimed-tv-stand-back.jpg",
+    "/models/generated-angles/furniture/reclaimed-tv-stand-front.jpg",
+    "/models/generated-angles/furniture/reclaimed-tv-stand-side.jpg",
+    "/models/generated-angles/furniture/reclaimed-tv-stand-three-quarter.jpg"
+  ],
+  "reclaimed-wood-cabinet": [
+    "/models/generated-angles/furniture/reclaimed-wood-cabinet-back.jpg",
+    "/models/generated-angles/furniture/reclaimed-wood-cabinet-front.jpg",
+    "/models/generated-angles/furniture/reclaimed-wood-cabinet-side.jpg",
+    "/models/generated-angles/furniture/reclaimed-wood-cabinet-three-quarter.jpg"
+  ],
+  "restaurant-table-chair-set": [
+    "/models/generated-angles/furniture/restaurant-table-chair-set-back.jpg",
+    "/models/generated-angles/furniture/restaurant-table-chair-set-front.jpg",
+    "/models/generated-angles/furniture/restaurant-table-chair-set-side.jpg",
+    "/models/generated-angles/furniture/restaurant-table-chair-set-three-quarter.jpg"
+  ],
+  "round-dining-table": [
+    "/models/generated-angles/furniture/round-dining-table-back.jpg",
+    "/models/generated-angles/furniture/round-dining-table-front.jpg",
+    "/models/generated-angles/furniture/round-dining-table-side.jpg",
+    "/models/generated-angles/furniture/round-dining-table-three-quarter.jpg"
+  ],
+  "storage-cabinet": [
+    "/models/generated-angles/furniture/storage-cabinet-back.jpg",
+    "/models/generated-angles/furniture/storage-cabinet-front.jpg",
+    "/models/generated-angles/furniture/storage-cabinet-side.jpg",
+    "/models/generated-angles/furniture/storage-cabinet-three-quarter.jpg"
+  ],
+  "vintage-soviet-era-cabinet": [
+    "/models/generated-angles/furniture/vintage-soviet-era-cabinet-back.jpg",
+    "/models/generated-angles/furniture/vintage-soviet-era-cabinet-front.jpg",
+    "/models/generated-angles/furniture/vintage-soviet-era-cabinet-side.jpg",
+    "/models/generated-angles/furniture/vintage-soviet-era-cabinet-three-quarter.jpg"
+  ],
+  "avalon-mcqueeny-ring": [
+    "/models/generated-angles/jewelry/avalon-mcqueeny-ring-back.jpg",
+    "/models/generated-angles/jewelry/avalon-mcqueeny-ring-front.jpg",
+    "/models/generated-angles/jewelry/avalon-mcqueeny-ring-side.jpg",
+    "/models/generated-angles/jewelry/avalon-mcqueeny-ring-three-quarter.jpg"
+  ],
+  "chamfered-edge-band": [
+    "/models/generated-angles/jewelry/chamfered-edge-band-back.jpg",
+    "/models/generated-angles/jewelry/chamfered-edge-band-front.jpg",
+    "/models/generated-angles/jewelry/chamfered-edge-band-side.jpg",
+    "/models/generated-angles/jewelry/chamfered-edge-band-three-quarter.jpg"
+  ],
+  "chapel-hills-cline-bridal-set": [
+    "/models/generated-angles/jewelry/chapel-hills-cline-bridal-set-back.jpg",
+    "/models/generated-angles/jewelry/chapel-hills-cline-bridal-set-front.jpg",
+    "/models/generated-angles/jewelry/chapel-hills-cline-bridal-set-side.jpg",
+    "/models/generated-angles/jewelry/chapel-hills-cline-bridal-set-three-quarter.jpg"
+  ],
+  "crown-statement-ring": [
+    "/models/generated-angles/jewelry/crown-statement-ring-back.jpg",
+    "/models/generated-angles/jewelry/crown-statement-ring-front.jpg",
+    "/models/generated-angles/jewelry/crown-statement-ring-side.jpg",
+    "/models/generated-angles/jewelry/crown-statement-ring-three-quarter.jpg"
+  ],
+  "garnet-solitaire-ring": [
+    "/models/generated-angles/jewelry/garnet-solitaire-ring-back.jpg",
+    "/models/generated-angles/jewelry/garnet-solitaire-ring-front.jpg",
+    "/models/generated-angles/jewelry/garnet-solitaire-ring-side.jpg",
+    "/models/generated-angles/jewelry/garnet-solitaire-ring-three-quarter.jpg"
+  ],
+  "gold-band-ring": [
+    "/models/generated-angles/jewelry/gold-band-ring-back.jpg",
+    "/models/generated-angles/jewelry/gold-band-ring-front.jpg",
+    "/models/generated-angles/jewelry/gold-band-ring-side.jpg",
+    "/models/generated-angles/jewelry/gold-band-ring-three-quarter.jpg"
+  ],
+  "juliet-rosary": [
+    "/models/generated-angles/jewelry/juliet-rosary-back.jpg",
+    "/models/generated-angles/jewelry/juliet-rosary-front.jpg",
+    "/models/generated-angles/jewelry/juliet-rosary-side.jpg",
+    "/models/generated-angles/jewelry/juliet-rosary-three-quarter.jpg"
+  ],
+  "sterling-cross-pendant": [
+    "/models/generated-angles/jewelry/sterling-cross-pendant-back.jpg",
+    "/models/generated-angles/jewelry/sterling-cross-pendant-front.jpg",
+    "/models/generated-angles/jewelry/sterling-cross-pendant-side.jpg",
+    "/models/generated-angles/jewelry/sterling-cross-pendant-three-quarter.jpg"
+  ],
+  "sterling-silver-band": [
+    "/models/generated-angles/jewelry/sterling-silver-band-back.jpg",
+    "/models/generated-angles/jewelry/sterling-silver-band-front.jpg",
+    "/models/generated-angles/jewelry/sterling-silver-band-side.jpg",
+    "/models/generated-angles/jewelry/sterling-silver-band-three-quarter.jpg"
+  ],
+  "three-stone-trilogy-ring": [
+    "/models/generated-angles/jewelry/three-stone-trilogy-ring-back.jpg",
+    "/models/generated-angles/jewelry/three-stone-trilogy-ring-front.jpg",
+    "/models/generated-angles/jewelry/three-stone-trilogy-ring-side.jpg",
+    "/models/generated-angles/jewelry/three-stone-trilogy-ring-three-quarter.jpg"
+  ],
+  "adidas-coffee-low-top": [
+    "/models/generated-angles/shoes/adidas-coffee-low-top-back.jpg",
+    "/models/generated-angles/shoes/adidas-coffee-low-top-front.jpg",
+    "/models/generated-angles/shoes/adidas-coffee-low-top-side.jpg",
+    "/models/generated-angles/shoes/adidas-coffee-low-top-three-quarter.jpg"
+  ],
+  "adidas-sport-trainer": [
+    "/models/generated-angles/shoes/adidas-sport-trainer-back.jpg",
+    "/models/generated-angles/shoes/adidas-sport-trainer-front.jpg",
+    "/models/generated-angles/shoes/adidas-sport-trainer-side.jpg",
+    "/models/generated-angles/shoes/adidas-sport-trainer-three-quarter.jpg"
+  ],
+  "air-jordan-1": [
+    "/models/generated-angles/shoes/air-jordan-1-back.jpg",
+    "/models/generated-angles/shoes/air-jordan-1-front.jpg",
+    "/models/generated-angles/shoes/air-jordan-1-side.jpg",
+    "/models/generated-angles/shoes/air-jordan-1-three-quarter.jpg"
+  ],
+  "arnt-ulv-jord-sneaker": [
+    "/models/generated-angles/shoes/arnt-ulv-jord-sneaker-back.jpg",
+    "/models/generated-angles/shoes/arnt-ulv-jord-sneaker-front.jpg",
+    "/models/generated-angles/shoes/arnt-ulv-jord-sneaker-side.jpg",
+    "/models/generated-angles/shoes/arnt-ulv-jord-sneaker-three-quarter.jpg"
+  ],
+  "black-formal-derby": [
+    "/models/generated-angles/shoes/black-formal-derby-back.jpg",
+    "/models/generated-angles/shoes/black-formal-derby-front.jpg",
+    "/models/generated-angles/shoes/black-formal-derby-side.jpg",
+    "/models/generated-angles/shoes/black-formal-derby-three-quarter.jpg"
+  ],
+  "brothers-classic-derby": [
+    "/models/generated-angles/shoes/brothers-classic-derby-back.jpg",
+    "/models/generated-angles/shoes/brothers-classic-derby-front.jpg",
+    "/models/generated-angles/shoes/brothers-classic-derby-side.jpg",
+    "/models/generated-angles/shoes/brothers-classic-derby-three-quarter.jpg"
+  ],
+  "classic-leather-oxford": [
+    "/models/generated-angles/shoes/classic-leather-oxford-back.jpg",
+    "/models/generated-angles/shoes/classic-leather-oxford-front.jpg",
+    "/models/generated-angles/shoes/classic-leather-oxford-side.jpg",
+    "/models/generated-angles/shoes/classic-leather-oxford-three-quarter.jpg"
+  ],
+  "heritage-oxford-shoe": [
+    "/models/generated-angles/shoes/heritage-oxford-shoe-back.jpg",
+    "/models/generated-angles/shoes/heritage-oxford-shoe-front.jpg",
+    "/models/generated-angles/shoes/heritage-oxford-shoe-side.jpg",
+    "/models/generated-angles/shoes/heritage-oxford-shoe-three-quarter.jpg"
+  ],
+  "insulated-winter-boot": [
+    "/models/generated-angles/shoes/insulated-winter-boot-back.jpg",
+    "/models/generated-angles/shoes/insulated-winter-boot-front.jpg",
+    "/models/generated-angles/shoes/insulated-winter-boot-side.jpg",
+    "/models/generated-angles/shoes/insulated-winter-boot-three-quarter.jpg"
+  ],
+  "new-balance-574": [
+    "/models/generated-angles/shoes/new-balance-574-back.jpg",
+    "/models/generated-angles/shoes/new-balance-574-front.jpg",
+    "/models/generated-angles/shoes/new-balance-574-side.jpg",
+    "/models/generated-angles/shoes/new-balance-574-three-quarter.jpg"
+  ],
+  "nike-air-zoom-pegasus-36": [
+    "/models/generated-angles/shoes/nike-air-zoom-pegasus-36-back.jpg",
+    "/models/generated-angles/shoes/nike-air-zoom-pegasus-36-front.jpg",
+    "/models/generated-angles/shoes/nike-air-zoom-pegasus-36-side.jpg",
+    "/models/generated-angles/shoes/nike-air-zoom-pegasus-36-three-quarter.jpg"
+  ],
+  "puffy-platform-heel": [
+    "/models/generated-angles/shoes/puffy-platform-heel-back.jpg",
+    "/models/generated-angles/shoes/puffy-platform-heel-front.jpg",
+    "/models/generated-angles/shoes/puffy-platform-heel-side.jpg",
+    "/models/generated-angles/shoes/puffy-platform-heel-three-quarter.jpg"
+  ],
+  "rieker-leather-loafer": [
+    "/models/generated-angles/shoes/rieker-leather-loafer-back.jpg",
+    "/models/generated-angles/shoes/rieker-leather-loafer-front.jpg",
+    "/models/generated-angles/shoes/rieker-leather-loafer-side.jpg",
+    "/models/generated-angles/shoes/rieker-leather-loafer-three-quarter.jpg"
+  ],
+  "scarlet-statement-heel": [
+    "/models/generated-angles/shoes/scarlet-statement-heel-back.jpg",
+    "/models/generated-angles/shoes/scarlet-statement-heel-front.jpg",
+    "/models/generated-angles/shoes/scarlet-statement-heel-side.jpg",
+    "/models/generated-angles/shoes/scarlet-statement-heel-three-quarter.jpg"
+  ],
+  "textured-grey-loafer": [
+    "/models/generated-angles/shoes/textured-grey-loafer-back.jpg",
+    "/models/generated-angles/shoes/textured-grey-loafer-front.jpg",
+    "/models/generated-angles/shoes/textured-grey-loafer-side.jpg",
+    "/models/generated-angles/shoes/textured-grey-loafer-three-quarter.jpg"
+  ],
+  "autumn-sword-toy": [
+    "/models/generated-angles/toys/autumn-sword-toy-back.jpg",
+    "/models/generated-angles/toys/autumn-sword-toy-front.jpg",
+    "/models/generated-angles/toys/autumn-sword-toy-side.jpg",
+    "/models/generated-angles/toys/autumn-sword-toy-three-quarter.jpg"
+  ],
+  "emerald-toy-sword": [
+    "/models/generated-angles/toys/emerald-toy-sword-back.jpg",
+    "/models/generated-angles/toys/emerald-toy-sword-front.jpg",
+    "/models/generated-angles/toys/emerald-toy-sword-side.jpg",
+    "/models/generated-angles/toys/emerald-toy-sword-three-quarter.jpg"
+  ],
+  "modular-doll-house": [
+    "/models/generated-angles/toys/modular-doll-house-back.jpg",
+    "/models/generated-angles/toys/modular-doll-house-front.jpg",
+    "/models/generated-angles/toys/modular-doll-house-side.jpg",
+    "/models/generated-angles/toys/modular-doll-house-three-quarter.jpg"
+  ],
+  "norse-hammer-toy": [
+    "/models/generated-angles/toys/norse-hammer-toy-back.jpg",
+    "/models/generated-angles/toys/norse-hammer-toy-front.jpg",
+    "/models/generated-angles/toys/norse-hammer-toy-side.jpg",
+    "/models/generated-angles/toys/norse-hammer-toy-three-quarter.jpg"
+  ],
+  "race-car-toy": [
+    "/models/generated-angles/toys/race-car-toy-back.jpg",
+    "/models/generated-angles/toys/race-car-toy-front.jpg",
+    "/models/generated-angles/toys/race-car-toy-side.jpg",
+    "/models/generated-angles/toys/race-car-toy-three-quarter.jpg"
+  ],
+  "red-hollowback-figure": [
+    "/models/generated-angles/toys/red-hollowback-figure-back.jpg",
+    "/models/generated-angles/toys/red-hollowback-figure-front.jpg",
+    "/models/generated-angles/toys/red-hollowback-figure-side.jpg",
+    "/models/generated-angles/toys/red-hollowback-figure-three-quarter.jpg"
+  ],
+  "red-speed-car-toy": [
+    "/models/generated-angles/toys/red-speed-car-toy-back.jpg",
+    "/models/generated-angles/toys/red-speed-car-toy-front.jpg",
+    "/models/generated-angles/toys/red-speed-car-toy-side.jpg",
+    "/models/generated-angles/toys/red-speed-car-toy-three-quarter.jpg"
+  ],
+  "strongman-action-figure": [
+    "/models/generated-angles/toys/strongman-action-figure-back.jpg",
+    "/models/generated-angles/toys/strongman-action-figure-front.jpg",
+    "/models/generated-angles/toys/strongman-action-figure-side.jpg",
+    "/models/generated-angles/toys/strongman-action-figure-three-quarter.jpg"
+  ],
+  "toy-bicycle": [
+    "/models/generated-angles/toys/toy-bicycle-back.jpg",
+    "/models/generated-angles/toys/toy-bicycle-front.jpg",
+    "/models/generated-angles/toys/toy-bicycle-side.jpg",
+    "/models/generated-angles/toys/toy-bicycle-three-quarter.jpg"
+  ],
+  "toy-jackhammer": [
+    "/models/generated-angles/toys/toy-jackhammer-back.jpg",
+    "/models/generated-angles/toys/toy-jackhammer-front.jpg",
+    "/models/generated-angles/toys/toy-jackhammer-side.jpg",
+    "/models/generated-angles/toys/toy-jackhammer-three-quarter.jpg"
+  ]
+}
