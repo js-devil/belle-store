@@ -1,3 +1,5 @@
+import { getStore } from "@netlify/blobs";
+
 // Shared shape for the running analytics aggregate blob (see events.post.ts
 // and summary.get.ts). Kept as plain counters/maps rather than Sets, since
 // the whole point is that this gets JSON-serialized into a single blob.
@@ -172,12 +174,15 @@ export function applyEventToAggregate(aggregate: Aggregate, event: any): Aggrega
         }
       } else {
         // Fair-comparison group: skipped 3D, but still actively inspected
-        // the 2D images (zoomed in or flipped thumbnails) rather than just
-        // bouncing - see the field comment above for why this exists.
-        // Mutually exclusive with the passive "visitsWithout3d" branch below
-        // so the two buckets sum to exactly "all visits that didn't open the
-        // viewer" without double-counting either way.
-        const activelyInspected2d = (p.imageZoomCount || 0) > 0 || (p.thumbnailSwitchCount || 0) > 0;
+        // the product some other way - zoomed a photo, flipped through
+        // thumbnails, or read the reviews - rather than just bouncing. Any
+        // one of these is a deliberate evaluation action, same as opening
+        // the 3D viewer is. Mutually exclusive with the passive
+        // "visitsWithout3d" branch below so the two buckets sum to exactly
+        // "all visits that didn't open the viewer" without double-counting
+        // either way.
+        const activelyInspected2d =
+          (p.imageZoomCount || 0) > 0 || (p.thumbnailSwitchCount || 0) > 0 || !!p.viewedReviews;
 
         if (activelyInspected2d) {
           aggregate.visitsActive2d++;
@@ -211,5 +216,34 @@ export function applyEventToAggregate(aggregate: Aggregate, event: any): Aggrega
     }
   }
 
+  return aggregate;
+}
+
+// Rebuilds the aggregate from every raw event blob, rather than trusting
+// whatever's currently stored - used both when the aggregate blob doesn't
+// exist yet (a fresh store) and on-demand (see recompute.post.ts) whenever
+// the classification rules in applyEventToAggregate() above change, so a
+// definition fix (e.g. what counts as "actively browsed 2D") applies
+// retroactively to already-collected raw events instead of only affecting
+// events recorded from that point forward. Kept to a modest batch size (not
+// hundreds-at-once, which reliably times out), since a full rebuild is rare,
+// not a per-request path.
+export async function backfillAggregate(
+  eventsStore: ReturnType<typeof getStore>,
+  batchSize = 20
+): Promise<Aggregate> {
+  const keys: string[] = [];
+  for await (const page of eventsStore.list({ paginate: true })) {
+    for (const blob of page.blobs) keys.push(blob.key);
+  }
+
+  let aggregate = EMPTY_AGGREGATE();
+  for (let i = 0; i < keys.length; i += batchSize) {
+    const batch = keys.slice(i, i + batchSize);
+    const records = await Promise.all(batch.map((key) => eventsStore.get(key, { type: "json" })));
+    for (const record of records) {
+      if (record) aggregate = applyEventToAggregate(aggregate, record);
+    }
+  }
   return aggregate;
 }

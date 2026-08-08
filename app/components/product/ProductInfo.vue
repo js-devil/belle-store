@@ -73,7 +73,7 @@
           :disabled="product.stock <= 0"
           @click="handleAddToCart"
         >
-          <span>{{ product.stock > 0 ? "Add to cart" : "Sold out" }}</span>
+          <span>{{ product.stock <= 0 ? "Sold out" : justAdded ? "Added to cart" : "Add to cart" }}</span>
         </button>
       </div>
     </div>
@@ -121,12 +121,24 @@ const savingsPercent = computed(() => {
   );
 });
 
+// Brief "Added to cart" confirmation on the button itself, reverting after
+// 3s - the toast (see useToast.js) already covers this, but a state change
+// on the button the shopper just clicked is a more direct confirmation.
+const justAdded = ref(false);
+let justAddedTimer = null;
+onBeforeUnmount(() => clearTimeout(justAddedTimer));
+
 function handleAddToCart() {
   emit("add-to-cart", {
     qty: qty.value,
     size: selectedSize.value,
     color: selectedColor.value,
   });
+  justAdded.value = true;
+  clearTimeout(justAddedTimer);
+  justAddedTimer = setTimeout(() => {
+    justAdded.value = false;
+  }, 3000);
 }
 </script>
 

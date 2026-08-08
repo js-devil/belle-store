@@ -147,7 +147,7 @@
       </section>
 
       <!-- RQ3 -->
-      <section class="rq-section">
+      <section class="rq-section hide">
         <div class="rq-section__head">
           <span class="rq-tag">RQ3 &middot; Product evaluation</span>
           <h2>
@@ -290,6 +290,26 @@
           {{ resetting ? "Resetting…" : "Reset live dashboard" }}
         </button>
       </section>
+
+      <section class="danger-zone hide">
+        <div class="danger-zone__text">
+          <h3>Recompute from raw data</h3>
+          <p>
+            Rebuilds the aggregate above from every raw event using today's classification
+            rules - use this after a definition changes (e.g. what counts as "actively browsed
+            2D") so the fix applies retroactively to visits already collected, instead of only
+            to new ones.
+          </p>
+        </div>
+        <button
+          type="button"
+          class="danger-zone__button"
+          :disabled="recomputing"
+          @click="recomputeLiveData"
+        >
+          {{ recomputing ? "Recomputing…" : "Recompute from raw data" }}
+        </button>
+      </section>
     </template>
   </div>
 </template>
@@ -311,6 +331,18 @@ async function resetLiveData() {
     await refresh();
   } finally {
     resetting.value = false;
+  }
+}
+
+const recomputing = ref(false);
+async function recomputeLiveData() {
+  if (!confirm("Rebuild the aggregate from every raw event using today's rules? This can take a moment.")) return;
+  recomputing.value = true;
+  try {
+    await $fetch("/api/analytics/recompute", { method: "POST" });
+    await refresh();
+  } finally {
+    recomputing.value = false;
   }
 }
 

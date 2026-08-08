@@ -14,13 +14,27 @@
           <OrderSummary :items="items" :subtotal-usd="subtotalUsd" />
         </div>
         <div class="col-12 col-lg-5">
-          <WalletPayment :items="items" :subtotal-usd="subtotalUsd" @order-placed="clearCart" />
+          <WalletPayment :items="items" :subtotal-usd="subtotalUsd" @order-placed="handleOrderPlaced" />
         </div>
       </div>
     </div>
+
+    <OrderConfirmationModal
+      v-if="showConfirmationModal"
+      @close="showConfirmationModal = false"
+    />
   </div>
 </template>
 
 <script setup>
 const { items, subtotalUsd, clearCart } = useCart();
+
+// The modal is Teleported (independent of the item list above), so it stays
+// up even though clearing the cart immediately swaps that list over to its
+// "cart is empty" state.
+const showConfirmationModal = ref(false);
+function handleOrderPlaced() {
+  showConfirmationModal.value = true;
+  clearCart();
+}
 </script>

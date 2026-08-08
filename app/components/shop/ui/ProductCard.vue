@@ -41,7 +41,7 @@
       <!-- action buttons -->
       <form class="variants add" action="#" @click.prevent="handleAddToCart">
         <button class="btn btn-addto-cart" type="button">
-          {{ hasVariants ? "Select Options" : "Add to cart" }}
+          {{ justAdded ? "Added to cart" : hasVariants ? "Select Options" : "Add to cart" }}
         </button>
       </form>
       <div class="button-set">
@@ -131,12 +131,24 @@ const hasVariants = computed(
 const inWishlist = computed(() => has(props.product.slug));
 const show3dViewer = ref(false);
 
+// Brief "Added to cart" confirmation on the button itself, reverting after
+// 3s - the toast (see useToast.js) already covers this, but a state change
+// on the button the shopper just clicked is a more direct confirmation.
+const justAdded = ref(false);
+let justAddedTimer = null;
+onBeforeUnmount(() => clearTimeout(justAddedTimer));
+
 function handleAddToCart() {
   if (hasVariants.value) {
     navigateTo(`/product/${props.product.slug}`);
     return;
   }
   emit("add-to-cart", props.product);
+  justAdded.value = true;
+  clearTimeout(justAddedTimer);
+  justAddedTimer = setTimeout(() => {
+    justAdded.value = false;
+  }, 3000);
 }
 </script>
 

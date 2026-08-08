@@ -1,35 +1,11 @@
 import { getStore } from "@netlify/blobs";
-import { applyEventToAggregate, EMPTY_AGGREGATE, withDefaults, type Aggregate } from "../../utils/analyticsAggregate";
+import { backfillAggregate, withDefaults, type Aggregate } from "../../utils/analyticsAggregate";
 
 function topEntries(counts: Record<string, number>, limit = 10) {
   return Object.entries(counts)
     .sort((a, b) => b[1] - a[1])
     .slice(0, limit)
     .map(([key, count]) => ({ key, count }));
-}
-
-// Backfill path only: rebuilds the aggregate from raw event blobs, for
-// events logged before the aggregate blob existed. Kept to a modest batch
-// size (not hundreds-at-once, which reliably times out) since this only
-// ever runs once per store, not on every request.
-async function backfillAggregate(
-  eventsStore: ReturnType<typeof getStore>,
-  batchSize = 20
-): Promise<Aggregate> {
-  const keys: string[] = [];
-  for await (const page of eventsStore.list({ paginate: true })) {
-    for (const blob of page.blobs) keys.push(blob.key);
-  }
-
-  let aggregate = EMPTY_AGGREGATE();
-  for (let i = 0; i < keys.length; i += batchSize) {
-    const batch = keys.slice(i, i + batchSize);
-    const records = await Promise.all(batch.map((key) => eventsStore.get(key, { type: "json" })));
-    for (const record of records) {
-      if (record) aggregate = applyEventToAggregate(aggregate, record);
-    }
-  }
-  return aggregate;
 }
 
 const ratio = (numerator: number, denominator: number) =>

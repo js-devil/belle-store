@@ -48,9 +48,9 @@
               type="button"
               class="btn btn-small"
               :disabled="product.stock <= 0"
-              @click="$emit('add-to-cart', product)"
+              @click="handleAddToCart(product)"
             >
-              Add To Cart
+              {{ justAdded.has(product.slug) ? "Added to cart" : "Add To Cart" }}
             </button>
           </td>
         </tr>
@@ -63,7 +63,25 @@
 defineProps({
   items: { type: Array, required: true },
 });
-defineEmits(["remove", "add-to-cart"]);
+const emit = defineEmits(["remove", "add-to-cart"]);
 
 const { formatPrice } = useCurrency();
+
+// Brief per-row "Added to cart" confirmation, reverting after 3s - keyed by
+// slug since this table can show several rows at once, each independently
+// clickable.
+const justAdded = ref(new Set());
+const justAddedTimers = {};
+onBeforeUnmount(() => Object.values(justAddedTimers).forEach(clearTimeout));
+
+function handleAddToCart(product) {
+  emit("add-to-cart", product);
+  justAdded.value.add(product.slug);
+  justAdded.value = new Set(justAdded.value);
+  clearTimeout(justAddedTimers[product.slug]);
+  justAddedTimers[product.slug] = setTimeout(() => {
+    justAdded.value.delete(product.slug);
+    justAdded.value = new Set(justAdded.value);
+  }, 3000);
+}
 </script>
